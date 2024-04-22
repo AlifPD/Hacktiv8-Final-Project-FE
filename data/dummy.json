@@ -1,0 +1,137 @@
+[
+    {
+      "id": 1,
+      "namaBarang": "tempat tidur pasien 1",
+      "jumlah": 68,
+      "kategori": "alat kesehatan",
+      "lokasi": "Gedung 2",
+      "isAvail": true,
+      "urlPicture": "https://picsum.photos/seed/picsum/200/300"
+    },
+    {
+      "id": 2,
+      "namaBarang": "alat sterilisasi 1",
+      "jumlah": 82,
+      "kategori": "alat kesehatan",
+      "lokasi": "Gedung 2",
+      "isAvail": true,
+      "urlPicture": "https://picsum.photos/seed/picsum/200/300"
+    },
+    {
+      "id": 3,
+      "namaBarang": "alat sterilisasi 2",
+      "jumlah": 98,
+      "kategori": "logistik pasien",
+      "lokasi": "Gedung 1",
+      "isAvail": true,
+      "urlPicture": "https://picsum.photos/seed/picsum/200/300"
+    },
+    {
+      "id": 4,
+      "namaBarang": "lemari obat 1",
+      "jumlah": 178,
+      "kategori": "logistik gudang",
+      "lokasi": "Gedung 1",
+      "isAvail": true,
+      "urlPicture": "https://picsum.photos/seed/picsum/200/300"
+    },
+    {
+      "id": 5,
+      "namaBarang": "meja operasi 1",
+      "jumlah": 26,
+      "kategori": "logistik pasien",
+      "lokasi": "Gedung 2",
+      "isAvail": true,
+      "urlPicture": "https://picsum.photos/seed/picsum/200/300"
+    },
+    {
+      "id": 6,
+      "namaBarang": "tempat tidur pasien 2",
+      "jumlah": 68,
+      "kategori": "logistik pasien",
+      "lokasi": "Gedung 2",
+      "isAvail": true,
+      "urlPicture": "https://picsum.photos/seed/picsum/200/300"
+    },
+    {
+      "id": 7,
+      "namaBarang": "lemari obat 2",
+      "jumlah": 13,
+      "kategori": "logistik pasien",
+      "lokasi": "Gedung 3",
+      "isAvail": true,
+      "urlPicture": "https://picsum.photos/seed/picsum/200/300"
+    },
+    {
+      "id": 8,
+      "namaBarang": "obat-obatan 1",
+      "jumlah": 193,
+      "kategori": "logistik pasien",
+      "lokasi": "Gedung 3",
+      "isAvail": true,
+      "urlPicture": "https://picsum.photos/seed/picsum/200/300"
+    },
+    {
+      "id": 9,
+      "namaBarang": "obat-obatan 2",
+      "jumlah": 92,
+      "kategori": "alat kesehatan",
+      "lokasi": "Gedung 1",
+      "isAvail": true,
+      "urlPicture": "https://picsum.photos/seed/picsum/200/300"
+    },
+    {
+      "id": 10,
+      "namaBarang": "meja operasi 2",
+      "jumlah": 106,
+      "kategori": "logistik gudang",
+      "lokasi": "Gedung 2",
+      "isAvail": true,
+      "urlPicture": "https://picsum.photos/seed/picsum/200/300"
+    },
+    {
+      "id": 11,
+      "namaBarang": "meja operasi 3",
+      "jumlah": 144,
+      "kategori": "alat kesehatan",
+      "lokasi": "Gedung 2",
+      "isAvail": true,
+      "urlPicture": "https://picsum.photos/seed/picsum/200/300"
+    },
+    {
+      "id": 12,
+      "namaBarang": "alat sterilisasi 3",
+      "jumlah": 97,
+      "kategori": "logistik pasien",
+      "lokasi": "Gedung 2",
+      "isAvail": true,
+      "urlPicture": "https://picsum.photos/seed/picsum/200/300"
+    },
+    {
+      "id": 13,
+      "namaBarang": "lemari obat 3",
+      "jumlah": 3,
+      "kategori": "logistik pasien",
+      "lokasi": "Gedung 1",
+      "isAvail": true,
+      "urlPicture": "https://picsum.photos/seed/picsum/200/300"
+    },
+    {
+      "id": 14,
+      "namaBarang": "tempat tidur pasien 3",
+      "jumlah": 180,
+      "kategori": "logistik pasien",
+      "lokasi": "Gedung 3",
+      "isAvail": true,
+      "urlPicture": "https://picsum.photos/seed/picsum/200/300"
+    },
+    {
+      "id": 15,
+      "namaBarang": "meja operasi 4",
+      "jumlah": 162,
+      "kategori": "alat kesehatan",
+      "lokasi": "Gedung 3",
+      "isAvail": true,
+      "urlPicture": "https://picsum.photos/seed/picsum/200/300"
+    }
+  ]

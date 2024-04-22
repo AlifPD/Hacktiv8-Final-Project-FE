@@ -1,0 +1,42 @@
+[
+    {
+        "id": 1,
+        "id_peminjam": 1,
+        "id_barang": 1,
+        "namaBarang": "tempat tidur pasien 1",
+        "jumlah": 3,
+        "tanggalPinjam": "2022-01-01",
+        "tanggalKembali": "2022-01-02",
+        "status": "Sedang Dipinjam"
+    },
+    {
+        "id": 2,
+        "id_peminjam": 1,
+        "id_barang": 2,
+        "namaBarang": "alat sterilisasi 1",
+        "jumlah": 3,
+        "tanggalPinjam": "2022-01-01",
+        "tanggalKembali": "2022-01-02",
+        "status": "Sedang Dipinjam"
+    },
+    {
+        "id": 3,
+        "id_peminjam": 1,
+        "id_barang": 3,
+        "namaBarang": "alat sterilisasi 2",
+        "jumlah": 2,
+        "tanggalPinjam": "2022-01-01",
+        "tanggalKembali": "2022-01-02",
+        "status": "Belum Dikembalikan"
+    },
+    {
+        "id": 4,
+        "id_peminjam": 1,
+        "id_barang": 4,
+        "jumlah": 4,
+        "namaBarang": "lemari obat 1",
+        "tanggalPinjam": "2022-01-01",
+        "tanggalKembali": "2022-01-02",
+        "status": "Sudah Dikembalikan"
+    }
+]
