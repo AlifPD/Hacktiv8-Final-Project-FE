@@ -61,7 +61,8 @@ function productAscending(dataInventory) {
   return dataInventory.sort((a, b) => a.namaBarang.localeCompare(b.namaBarang))
 }
 
-watch(input, filteredList(store.dataInventory), stockDescending(store.dataInventory), stockAscending(store.dataInventory), productDescending(store.dataInventory), productAscending(store.dataInventory))
+watch(input)
+
 </script>
 
 <template>
