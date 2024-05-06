@@ -4,6 +4,8 @@ import PeminjamanView from '../views/PeminjamanView.vue'
 import HistoryView from '@/views/HistoryView.vue'
 import LoginView from '@/views/LoginView.vue'
 import RegistrationPage from '@/views/RegistrationPage.vue'
+import AccountView from '@/views/AccountView.vue'
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -24,9 +26,15 @@ const router = createRouter({
       component: HistoryView
     },
     {
+      path: '/account',
+      name: 'account',
+      component: AccountView
+    },
+    {
       path: '/login',
       name: 'login',
       component: LoginView
+
     }, 
     {
       path: '/register',

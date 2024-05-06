@@ -1,9 +1,13 @@
 <script setup>
 import { RouterLink } from 'vue-router';
 import { ref } from 'vue';
+import { useStore } from '@/stores/counter';
+
 const showPassword = ref(false)
 const password = ref('')
+const email = ref('')
 
+const store = useStore()
 const togglePasswordVisibility = () => {
     showPassword.value = !showPassword.value
 }
@@ -27,7 +31,7 @@ const togglePasswordVisibility = () => {
                         <div class="form-outline mb-4">
                             <label class="form-label fw-bold" for="form3Example3">Email</label>
                             <input type="email" id="form3Example3" class="form-control rounded-pill"
-                                placeholder="Masukkan email" required="true" />
+                                placeholder="Masukkan email" required="true" v-model="email" />
                         </div>
 
                         <!-- Password input -->
@@ -58,13 +62,15 @@ const togglePasswordVisibility = () => {
                                     Ingat saya
                                 </label>
                             </div>
-                            <a href="#" class="text-decoration-none" data-bs-toggle="popover" data-bs-placement="left"
+                            <a class="text-decoration-none" data-bs-toggle="popover" data-bs-placement="left"
                                 data-bs-content="Fitur belum tersedia. Silakan hubungi administrator">Lupa password?
                             </a>
                         </div>
 
                         <div class="text-center text-lg-start mt-4 pt-2">
-                            <button class="btn btn-primary rounded-pill w-100">
+                            <button class="btn btn-primary rounded-pill w-100" type="submit"
+                                @click.prevent="store.login(email, password)"
+                                :disabled="email === '' || password === ''">
                                 Masuk
                             </button>
                             <p class="small fw-bold mt-2 pt-1 mb-0 text-center">

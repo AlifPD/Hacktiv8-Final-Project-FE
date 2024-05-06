@@ -1,59 +1,174 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
+import axios from 'axios'
+import Swal from 'sweetalert2'
+import router from '@/router'
 
 export const useStore = defineStore('useStore', () => {
-  const username = ref('username')
-  const email = ref('mail@mail.com')
+  const dataUserbyId = ref({})
   const dataInventory = ref([])
+  
   // function untuk mengambil data inventory
+  
   const getData = async () => {
     try {
-      const response = await fetch('../data/dummy.json')
-      const json = await response.json()
-      dataInventory.value = json
+      const response = await axios.get('http://localhost:3000/api/inventaris',{
+        headers: {
+          token: localStorage.getItem('token')
+        }
+      })
+      dataInventory.value = response.data.data
+      // console.log(localStorage.getItem('token'));
+      
     } catch (error) {
-      console.error("Error mengambil data", error);
-    }
-
+      console.error("Error mengambil data", error.message)
   }
+}
   const dataPeminjaman = ref([])
 
-  // function untuk mengambil data peminjaman
   const getPeminjaman = async () => {
     try {
-      const response = await fetch('../data/peminjaman.json')
-      const json = await response.json()
-      dataPeminjaman.value = json
+      const response = await axios.get('http://localhost:3000/api/peminjaman',{
+        headers: {
+          token: localStorage.getItem('token')
+        }
+      })
+      dataPeminjaman.value = response.data.data
     } catch (error) {
-      console.error("Error mengambil data", error)
+      console.error("Error mengambil data", error);
     }
   }
 
   // function untuk menambah data peminjaman 
   const dataTambahPinjaman = ref({})
-  const tambahDataPeminjaman = async (dataTambahPinjaman) => {
+
+  const tambahDataPeminjaman = async (pinjamanUser, quantity, borrowedDate, returnDate)=>{
     try {
-      const response = await fetch('../data/peminjaman.json', {
-        method: 'POST',
+      const selected = dataInventory.value.find(item => item.namaBarang === pinjamanUser)
+      const response = await axios.post('http://localhost:3000/api/peminjaman', {
+        // id: parseInt(dataPeminjaman.value.length + 1),
+        id: Math.max.apply(null, dataPeminjaman.value.map(item => item.id)) + 1, // id peminjaman 
+        idBarang: selected.id,
+        idPeminjam : 1, // berikan nilai dulu default 1
+        jumlah:parseInt(quantity),
+        tanggalPinjam: borrowedDate,
+        tanggalKembali: returnDate,
+        status: "Sedang Dipinjam",
+      },
+      {
         headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(dataTambahPinjaman.value)
+          token: localStorage.getItem('token')
+        }
+      }
+    )
+      await axios.put(`http://localhost:3000/api/inventaris/${selected.id}`, {
+        jumlah:parseInt(selected.jumlah) - parseInt(response.data.data.jumlah),
+      },
+      {
+        headers: {
+          token: localStorage.getItem('token')
+        }
       })
-      const json = await response.json()
-      dataPeminjaman.value.push(json)
-      console.log(dataPeminjaman.value)
+      Swal.fire({
+        icon: 'success',
+        text: "Berhasil ajukan peminjaman",
+      })
+      // redirect ke halaman history 
+      router.push({name: 'histori'})
     } catch (error) {
-      console.error("Error menambah data", error)
+      console.error("Error menambah data", error);
+    };
+  }
+
+  // function register
+  const register = async (username, email, password) => {
+    try {
+      const data = {
+        username,
+        email,
+        password
+      }
+      await axios.post('http://localhost:3000/api/user', data)
+      Swal.fire({
+        icon: 'success',
+        text: 'Registrasi Berhasil, Klik OK untuk login',
+      })
+      router.push({name: 'login'})
+    } catch (error) {
+      console.log(error);
     }
   }
+
+  // function login
+  const token = ref('')
+  const login = async (email, password) => {
+    try {
+      const data = {
+        email,
+        password
+      }
+      const response = await axios.post('http://localhost:3000/api/user/login', data)
+      // console.log(response.data.data.idUser);
+      token.value = response.data.data.token
+      localStorage.setItem('token', token.value)
+      localStorage.setItem('id', response.data.data.idUser)
+      router.push({name: 'home'})
+      return response.data.data.idUser
+    } catch (error) {
+      console.log(error);
+      Swal.fire({
+        icon: 'error',
+        text: error.request.response.split('"')[7],
+      })
+    }
+  }
+
+  // function logout
+  const logout = () => {
+    localStorage.clear()
+    router.push({name: 'login'})
+  }
+
+  // check apakah user sedang login
+  const isLoggedIn = (() => {
+    if (!localStorage.getItem('token')) {
+      router.push({name: 'login'})
+      Swal.fire({
+        icon: 'error',
+        text: 'Silakan login terlebih dahulu',
+      })
+    }
+  })
+
+  // function untuk menampilkan data user 
+  const getUser = async () => {
+    try {
+      const response = await axios.get(`http://localhost:3000/api/user/${localStorage.getItem('id')}`, {
+        headers: {
+          token: localStorage.getItem('token')
+        }
+      })
+      dataUserbyId.value = response.data.data
+    } catch (error) {
+      console.error("Error mengambil data", error.message);
+    }
+  }
+  const username = dataUserbyId.username
+  const email = dataUserbyId.value.email
+
   return { 
     email, 
     username,
     dataInventory,
     dataPeminjaman,
     dataTambahPinjaman,
+    dataUserbyId,
     tambahDataPeminjaman,
     getPeminjaman, 
-    getData }
+    getData,
+    register,
+    login, 
+    logout,
+    isLoggedIn,
+    getUser}
 })

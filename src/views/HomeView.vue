@@ -5,6 +5,7 @@ import { getID } from '../../functions/getID'
 import Navbar from '../components/Navbar.vue'
 import { onMounted, ref, watch } from 'vue'
 const store = useStore()
+store.isLoggedIn()
 
 const fetchInventory = async () => {
   await store.getData()
@@ -13,6 +14,7 @@ const fetchInventory = async () => {
 onMounted(() => {
   fetchInventory()
 })
+
 
 let input = ref('')
 function filteredList(dataInventory) {
@@ -132,21 +134,55 @@ watch(input)
 
             <div class="row row-cols-1 row-cols-sm-3 g-4">
               <!-- card isi data tersedia (diambil dari data dummy) -->
-              <div class="col" v-for="item in filteredList(store.dataInventory)" :key="item" :item="item">
+              <div class="col" v-for="item in filteredList(store.dataInventory)" :key="item.id" :item="item">
                 <div class="card">
                   <img :src="item.urlPicture" class="img-thumbnail img-fluid" alt="..." height="300">
                   <div class="card-body">
-                    <h5 class="card-title text-truncate text-capitalize">{{ item.namaBarang }}</h5>
+                    <div class="d-flex flex-row justify-content-between align-items-center mb-2">
+                      <h5 class="card-title text-truncate text-capitalize mb-0">{{ item.namaBarang }}</h5>
+                      <i class="bi bi-info-circle text-success" :data-id="item.id" @click="getID(item.id)"
+                        data-bs-toggle="modal" :data-bs-target="'#infoModal-' + item.id">
+                      </i>
+                    </div>
                     <p class="card-subtitle mb-2 text-body-secondary text-capitalize"> Kategori: {{ item.kategori }}</p>
                     <p class="card-text"> Stock: {{ item.jumlah }}</p>
-                    <a class="card-link btn btn-primary rounded-pill" @click.prevent="getID(item.id)">
-                      Detail
-                    </a>
-                    <a class="card-link btn btn-success rounded-pill">
-                      Add to Cart
-                    </a>
                   </div>
                 </div>
+
+                <!-- modal info -->
+                <div class="modal fade" :id="'infoModal-' + item.id" tabindex="-1" aria-labelledby="infoModalLabel"
+                  aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title text-capitalize" id="exampleModalLabel">{{ item.namaBarang }}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                        <div class="row">
+                          <div class="col-sm-4 text-sm-center">
+                            <img :src="item.urlPicture" class="img-fluid" alt="..." height="10">
+                          </div>
+                          <div class="col">
+                            <ul class="list-group">
+                              <li class="list-group-item bg-transparent text-capitalize"><b>Kategori</b>: {{
+                                item.kategori }}
+                              </li>
+                              <li class="list-group-item bg-transparent text-capitalize"><b>Lokasi</b>: {{ item.lokasi
+                                }}</li>
+                              <li class="list-group-item bg-transparent"><b> Stock </b>: {{ item.jumlah }}</li>
+                              <li class="list-group-item bg-transparent"><b>Deskripsi</b>: {{ item.deskripsi }}</li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
               </div>
 
               <!-- jika tidak ada data ditemukan -->
@@ -163,3 +199,9 @@ watch(input)
     </div>
   </main>
 </template>
+
+<style scoped>
+.bi-info-circle:hover {
+  cursor: pointer;
+}
+</style>

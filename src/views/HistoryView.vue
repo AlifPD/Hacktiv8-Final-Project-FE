@@ -6,24 +6,38 @@ import Sidebar from '../components/Sidebar.vue'
 import { useStore } from '@/stores/counter';
 
 const store = useStore()
+store.isLoggedIn()
 
 const fetchPeminjaman = async () => {
   await store.getPeminjaman()
 }
 
+const fetchInventory = async () => {
+  await store.getData()
+}
 onMounted(() => {
   fetchPeminjaman()
+  fetchInventory()
 })
 
 let input = ref('')
 
 const filteredList = (dataPeminjaman) => {
   if (!input.value) {
-    return dataPeminjaman
+    return dataPeminjaman.map(peminjaman => {
+      const barang = store.dataInventory.find(item => item.id === peminjaman.idBarang);
+      return { ...peminjaman, namaBarang: barang ? barang.namaBarang : 'Barang tidak ditemukan' }
+    })
   }
   else {
-    return dataPeminjaman.filter(item =>
+    const modifiedPeminjaman = dataPeminjaman.map(peminjaman => {
+      const barang = store.dataInventory.find(item => item.id === peminjaman.idBarang)
+      return { ...peminjaman, namaBarang: barang ? barang.namaBarang : 'Barang tidak ditemukan' }
+    })
+
+    return modifiedPeminjaman.filter(item =>
       item.namaBarang.toLowerCase().includes(input.value.toLowerCase()))
+
   }
 }
 
@@ -63,7 +77,6 @@ watch(input, filteredList(store.dataPeminjaman))
                     <th scope="col" class="text-center">Tanggal Peminjaman</th>
                     <th scope="col" class="text-center">Tanggal Pengembalian</th>
                     <th scope="col" class="text-center">Status</th>
-                    <th scope="col" class="text-center">Action</th>
                   </tr>
                 </thead>
                 <tbody class="table-group-divider">
@@ -71,13 +84,14 @@ watch(input, filteredList(store.dataPeminjaman))
                     <td class="text-center align-middle">{{ index + 1 }}</td>
                     <td class="text-center align-middle text-capitalize">{{ peminjaman.namaBarang }}</td>
                     <td class="text-center align-middle">{{ peminjaman.jumlah }}</td>
-                    <td class="text-center align-middle">{{ peminjaman.tanggalPinjam }}</td>
-                    <td class="text-center align-middle">{{ peminjaman.tanggalKembali }}</td>
-                    <td class="text-center align-middle">{{ peminjaman.status }}</td>
-                    <td class="text-center align-middle">
-                      <i class="bi bi-pencil-square btn text-success "></i>
-                      <i class="bi bi-trash btn text-danger"></i>
-                    </td>
+                    <td class="text-center align-middle">{{ peminjaman.tanggalPinjam.toString().split('T')[0] }}</td>
+                    <td class="text-center align-middle">{{ peminjaman.tanggalKembali.toString().split('T')[0] }}</td>
+                    <td class="text-center align-middle text-danger" v-if="peminjaman.status == 'Belum Dikembalikan'">
+                      {{ peminjaman.status }}</td>
+                    <td class="text-center align-middle text-success" v-if="peminjaman.status == 'Sudah Dikembalikan'">
+                      {{ peminjaman.status }}</td>
+                    <td class="text-center align-middle text-primary"
+                      v-else-if="peminjaman.status == 'Sedang Dipinjam'">{{ peminjaman.status }}</td>
                   </tr>
                   <tr v-if="input && !filteredList(store.dataPeminjaman).length">
                     <th class="text-center align-middle" colspan="7">

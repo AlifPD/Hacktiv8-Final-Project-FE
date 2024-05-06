@@ -1,12 +1,16 @@
 <script setup>
 import { RouterLink } from 'vue-router';
 import { ref, watch } from 'vue';
+import { useStore } from '@/stores/counter';
 const showPassword = ref(false)
 const showConfirmPassword = ref(false)
 const username = ref('')
 const email = ref('')
 const password = ref('')
 const confirmPassword = ref('')
+
+const store = useStore()
+// store.getUser()
 
 const togglePasswordVisibility = () => {
     showPassword.value = !showPassword.value
@@ -101,7 +105,8 @@ watch(password, confirmPassword)
 
                         <div class="text-center text-lg-start mt-0 pt-2">
                             <button class="btn btn-primary rounded-pill w-100"
-                                :disabled="confirmPassword !== password || email === '' || username === '' || password === ''">
+                                :disabled="confirmPassword !== password || email === '' || username === '' || password === ''"
+                                @click.prevent="store.register(username, email, password)">
                                 Daftar
                             </button>
                             <p class="small fw-bold mt-2 pt-1 mb-0 text-center">

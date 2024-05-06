@@ -1,0 +1,50 @@
+<script setup>
+import Navbar from '../components/Navbar.vue'
+import Sidebar from '../components/Sidebar.vue'
+import { useStore } from '@/stores/counter';
+
+const store = useStore()
+store.isLoggedIn()
+store.getUser()
+
+
+</script>
+
+<template>
+    <header>
+        <Navbar />
+    </header>
+    <main>
+        <div class="container mt-5">
+            <div class="row">
+                <div class="col-sm-2 my-sm-5 p-3">
+                    <Sidebar />
+                </div>
+                <div class="col my-sm-5 p-3">
+                    <div class="card p-4 shadow-lg">
+                        <h1>Account</h1>
+                        <form>
+                            <div class="col-sm-5">
+                                <div class="form-outline mb-4">
+                                    <label class="form-label fw-bold">Email</label>
+                                    <input type="email" class="form-control rounded-pill"
+                                        v-model="store.dataUserbyId.email">
+                                </div>
+                                <div class="form-outline mb-4">
+                                    <label class="form-label fw-bold">Username</label>
+                                    <input type="text" class="form-control rounded-pill"
+                                        v-model="store.dataUserbyId.username">
+                                </div>
+                                <div class="form-outline mb-4">
+                                    <label class="form-label fw-bold">Phone Number</label>
+                                    <input type="text" class="form-control rounded-pill"
+                                        v-model="store.dataUserbyId.phoneNumber">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</template>
