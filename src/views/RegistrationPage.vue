@@ -10,6 +10,7 @@ const password = ref('')
 const confirmPassword = ref('')
 
 const store = useStore()
+store.isLoggedIn()
 // store.getUser()
 
 const togglePasswordVisibility = () => {
