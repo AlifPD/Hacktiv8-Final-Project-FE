@@ -28,7 +28,7 @@ export const useStore = defineStore('useStore', () => {
 
   const getPeminjaman = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/api/peminjaman',{
+      const response = await axios.get(`http://localhost:3000/api/peminjaman/user/${localStorage.getItem('id')}`,{
         headers: {
           token: localStorage.getItem('token')
         }
@@ -45,11 +45,15 @@ export const useStore = defineStore('useStore', () => {
   const tambahDataPeminjaman = async (pinjamanUser, quantity, borrowedDate, returnDate)=>{
     try {
       const selected = dataInventory.value.find(item => item.namaBarang === pinjamanUser)
+      let id = 1 
+      if (dataPeminjaman.value.length > 0) {
+        id = Math.max.apply(null, dataPeminjaman.value.map(item => item.id)) + 1
+      }
       const response = await axios.post('http://localhost:3000/api/peminjaman', {
         // id: parseInt(dataPeminjaman.value.length + 1),
-        id: Math.max.apply(null, dataPeminjaman.value.map(item => item.id)) + 1, // id peminjaman 
+        id: id, // id peminjaman 
         idBarang: selected.id,
-        idPeminjam : 1, // berikan nilai dulu default 1
+        idPeminjam : localStorage.getItem('id'), 
         jumlah:parseInt(quantity),
         tanggalPinjam: borrowedDate,
         tanggalKembali: returnDate,
@@ -132,11 +136,22 @@ export const useStore = defineStore('useStore', () => {
   // check apakah user sedang login
   const isLoggedIn = (() => {
     if (!localStorage.getItem('token')) {
-      router.push({name: 'login'})
-      Swal.fire({
-        icon: 'error',
-        text: 'Silakan login terlebih dahulu',
-      })
+      if (router.currentRoute.value.name === 'login') {
+        router.push({name:'login'})
+      }
+      else if (router.currentRoute.value.name === 'register') {
+        router.push({name:'register'})
+      }
+      else{
+        router.push({name: 'login'})
+        Swal.fire({
+          icon: 'error',
+          text: 'Silakan login terlebih dahulu',
+        })
+      }      
+    }
+    else if (router.currentRoute.value.name === 'login' || router.currentRoute.value.name === 'register') {
+      router.push({name: 'home'})
     }
   })
 
