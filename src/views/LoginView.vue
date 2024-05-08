@@ -8,6 +8,7 @@ const password = ref('')
 const email = ref('')
 
 const store = useStore()
+store.isLoggedIn()
 const togglePasswordVisibility = () => {
     showPassword.value = !showPassword.value
 }
