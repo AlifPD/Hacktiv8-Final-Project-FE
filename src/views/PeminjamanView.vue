@@ -81,13 +81,21 @@ const today = new Date().toISOString().split('T')[0]
                     <span class="text-muted" v-if="stock !== null">Stock: {{ stock }} pcs</span>
                   </div>
                   <input type="number" class="form-control rounded-pill border-danger" v-bind:min="0" v-bind:max="stock"
-                    v-model="quantity" v-if="quantity > stock || stock === 0" required>
+                    v-model="quantity"
+                    v-if="quantity > stock || stock === 0 || quantity < 0 || (quantity == 0 && selectedBarang)"
+                    required>
                   <input type="number" class="form-control rounded-pill" v-bind:min="0" v-bind:max="stock"
-                    v-model="quantity" v-if="quantity <= stock" required>
+                    v-model="quantity" v-if="quantity <= stock && quantity > 0 || !selectedBarang" required>
                   <p class="text-danger mb-0 mt-2 ms-2" v-if="stock === 0">Maaf, stock habis
                   </p>
                   <p class="text-danger mb-0 mt-2 ms-2" v-if="quantity > stock">
                     Maaf, maksimum pemesanan adalah <strong>{{ stock }} pcs</strong>
+                  </p>
+                  <p class="text-danger mb-0 mt-2 ms-2" v-if="quantity < 0 && selectedBarang">
+                    Maaf, nilai pemesanan tidak valid
+                  </p>
+                  <p class="text-danger mb-0 mt-2 ms-2" v-if="quantity == 0 && selectedBarang">
+                    Maaf, nilai minimum pemesanan adalah <strong>1 pcs</strong>
                   </p>
                 </div>
                 <!-- input tanggal pinjam -->
