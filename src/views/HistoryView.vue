@@ -93,6 +93,12 @@ watch(input, filteredList(store.dataPeminjaman))
                     <td class="text-center align-middle text-primary"
                       v-else-if="peminjaman.status == 'Sedang Dipinjam'">{{ peminjaman.status }}</td>
                   </tr>
+                  <tr v-if="!input && filteredList(store.dataPeminjaman).length == 0">
+                    <th class="text-center align-middle" colspan="7">
+                      <i class="bi bi-database-fill-x text-secondary" style="font-size:50px;"></i>
+                      <p class="fw-bold text-secondary">Belum ada data</p>
+                    </th>
+                  </tr>
                   <tr v-if="input && !filteredList(store.dataPeminjaman).length">
                     <th class="text-center align-middle" colspan="7">
                       <i class="bi bi-emoji-frown text-danger" style="font-size:50px;"></i>
