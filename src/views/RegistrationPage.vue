@@ -8,6 +8,7 @@ const username = ref('')
 const email = ref('')
 const password = ref('')
 const confirmPassword = ref('')
+const phoneNumber = ref('')
 
 const store = useStore()
 store.isLoggedIn()
@@ -51,6 +52,13 @@ watch(password, confirmPassword)
                             <label class="form-label fw-bold" for="email">Email</label>
                             <input type="email" class="form-control rounded-pill" placeholder="Masukkan email"
                                 required="true" v-model="email" />
+                        </div>
+
+                        <!-- Phone Number input -->
+                        <div class="form-outline mb-4">
+                            <label class="form-label fw-bold" for="phoneNumber">Phone Number</label>
+                            <input type="text" class="form-control rounded-pill" placeholder="Masukkan Phone Number"
+                                required="true" v-model="phoneNumber" />
                         </div>
 
                         <!-- Password input -->
