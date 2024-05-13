@@ -13,7 +13,7 @@ const fetchPeminjaman = async () => {
 }
 
 const fetchInventory = async () => {
-  await store.getData()
+  await store.getAllInventory()
 }
 onMounted(() => {
   fetchPeminjaman()
@@ -25,18 +25,18 @@ let input = ref('')
 const filteredList = (dataPeminjaman) => {
   if (!input.value) {
     return dataPeminjaman.map(peminjaman => {
-      const barang = store.dataInventory.find(item => item.id === peminjaman.idBarang);
-      return { ...peminjaman, namaBarang: barang ? barang.namaBarang : 'Barang tidak ditemukan' }
+      const barang = store.dataInventory.find(item => item.id === peminjaman.idItem);
+      return { ...peminjaman, itemName: barang ? barang.itemName : 'Barang tidak ditemukan' }
     })
   }
   else {
     const modifiedPeminjaman = dataPeminjaman.map(peminjaman => {
-      const barang = store.dataInventory.find(item => item.id === peminjaman.idBarang)
-      return { ...peminjaman, namaBarang: barang ? barang.namaBarang : 'Barang tidak ditemukan' }
+      const barang = store.dataInventory.find(item => item.id === peminjaman.idItem)
+      return { ...peminjaman, itemName: barang ? barang.itemName : 'Barang tidak ditemukan' }
     })
 
     return modifiedPeminjaman.filter(item =>
-      item.namaBarang.toLowerCase().includes(input.value.toLowerCase()))
+      item.itemName.toLowerCase().includes(input.value.toLowerCase()))
 
   }
 }
@@ -82,10 +82,10 @@ watch(input, filteredList(store.dataPeminjaman))
                 <tbody class="table-group-divider">
                   <tr v-for="(peminjaman, index) in filteredList(store.dataPeminjaman) ">
                     <td class="text-center align-middle">{{ index + 1 }}</td>
-                    <td class="text-center align-middle text-capitalize">{{ peminjaman.namaBarang }}</td>
-                    <td class="text-center align-middle">{{ peminjaman.jumlah }}</td>
-                    <td class="text-center align-middle">{{ peminjaman.tanggalPinjam.toString().split('T')[0] }}</td>
-                    <td class="text-center align-middle">{{ peminjaman.tanggalKembali.toString().split('T')[0] }}</td>
+                    <td class="text-center align-middle text-capitalize">{{ peminjaman.itemName }}</td>
+                    <td class="text-center align-middle">{{ peminjaman.quantity }}</td>
+                    <td class="text-center align-middle">{{ peminjaman.dateLoan.toString().split('T')[0] }}</td>
+                    <td class="text-center align-middle">{{ peminjaman.dateReturn.toString().split('T')[0] }}</td>
                     <td class="text-center align-middle text-danger" v-if="peminjaman.status == 'Belum Dikembalikan'">
                       {{ peminjaman.status }}</td>
                     <td class="text-center align-middle text-success" v-if="peminjaman.status == 'Sudah Dikembalikan'">
