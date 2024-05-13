@@ -5,7 +5,7 @@ import { useStore } from '@/stores/counter';
 
 const store = useStore()
 store.isLoggedIn()
-store.getUser()
+store.getUserById()
 
 
 </script>
@@ -29,17 +29,17 @@ store.getUser()
                                     <div class="form-outline mb-4">
                                         <label class="form-label fw-bold">Email</label>
                                         <input type="email" class="form-control rounded-pill"
-                                            v-model="store.dataUserbyId.email" readonly>
+                                            v-model="store.dataUserbyId.email" disabled readonly>
                                     </div>
                                     <div class="form-outline mb-4">
                                         <label class="form-label fw-bold">Username</label>
                                         <input type="text" class="form-control rounded-pill"
-                                            v-model="store.dataUserbyId.username" readonly>
+                                            v-model="store.dataUserbyId.userName" disabled readonly>
                                     </div>
                                     <div class="form-outline mb-4">
                                         <label class="form-label fw-bold">Phone Number</label>
                                         <input type="text" class="form-control rounded-pill"
-                                            v-model="store.dataUserbyId.phoneNumber" readonly>
+                                            v-model="store.dataUserbyId.phoneNumber" disabled readonly>
                                     </div>
                                 </form>
                             </div>
