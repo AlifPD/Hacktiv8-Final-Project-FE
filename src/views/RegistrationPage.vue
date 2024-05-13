@@ -4,7 +4,7 @@ import { ref, watch } from 'vue';
 import { useStore } from '@/stores/counter';
 const showPassword = ref(false)
 const showConfirmPassword = ref(false)
-const username = ref('')
+const userName = ref('')
 const email = ref('')
 const password = ref('')
 const confirmPassword = ref('')
@@ -42,9 +42,9 @@ watch(password, confirmPassword)
                     <div class="card p-3 shadow-lg">
                         <!-- Username input -->
                         <div class="form-outline mb-4">
-                            <label class="form-label fw-bold" for="username">Username</label>
+                            <label class="form-label fw-bold" for="userName">Username</label>
                             <input type="text" class="form-control rounded-pill" placeholder="Masukkan username"
-                                required="true" v-model="username" />
+                                required="true" v-model="userName" />
                         </div>
 
                         <!-- Email input -->
@@ -56,8 +56,8 @@ watch(password, confirmPassword)
 
                         <!-- Phone Number input -->
                         <div class="form-outline mb-4">
-                            <label class="form-label fw-bold" for="phoneNumber">Phone Number</label>
-                            <input type="text" class="form-control rounded-pill" placeholder="Masukkan Phone Number"
+                            <label class="form-label fw-bold" for="phoneNumber">Nomor Handphone</label>
+                            <input type="text" class="form-control rounded-pill" placeholder="08xxxxxxxx"
                                 required="true" v-model="phoneNumber" />
                         </div>
 
@@ -114,8 +114,8 @@ watch(password, confirmPassword)
 
                         <div class="text-center text-lg-start mt-0 pt-2">
                             <button class="btn btn-primary rounded-pill w-100"
-                                :disabled="confirmPassword !== password || email === '' || username === '' || password === ''"
-                                @click.prevent="store.register(username, email, password)">
+                                :disabled="confirmPassword !== password || email === '' || userName === '' || password === ''"
+                                @click.prevent="store.register(userName, email, password, confirmPassword, phoneNumber)">
                                 Daftar
                             </button>
                             <p class="small fw-bold mt-2 pt-1 mb-0 text-center">
