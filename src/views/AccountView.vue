@@ -23,29 +23,32 @@ store.getUser()
                 <div class="col my-sm-5 p-3">
                     <div class="card p-4 shadow-lg">
                         <h1>Account</h1>
-                        <div class="col-sm-5">
-                            <form>
-                                <div class="form-outline mb-4">
-                                    <label class="form-label fw-bold">Email</label>
-                                    <input type="email" class="form-control rounded-pill"
-                                        v-model="store.dataUserbyId.email" readonly>
-                                </div>
-                                <div class="form-outline mb-4">
-                                    <label class="form-label fw-bold">Username</label>
-                                    <input type="text" class="form-control rounded-pill"
-                                        v-model="store.dataUserbyId.username" readonly>
-                                </div>
-                                <div class="form-outline mb-4">
-                                    <label class="form-label fw-bold">Phone Number</label>
-                                    <input type="text" class="form-control rounded-pill"
-                                        v-model="store.dataUserbyId.phoneNumber" readonly>
-                                </div>
-                            </form>
-                        </div>
-                        <div class="col-sm-5">
-                            <button class="btn btn-primary text-white rounded-pill" type="button">
-                                Edit Data
-                            </button>
+                        <div class="row justify-content-between">
+                            <div class="col-sm-6">
+                                <form>
+                                    <div class="form-outline mb-4">
+                                        <label class="form-label fw-bold">Email</label>
+                                        <input type="email" class="form-control rounded-pill"
+                                            v-model="store.dataUserbyId.email" readonly>
+                                    </div>
+                                    <div class="form-outline mb-4">
+                                        <label class="form-label fw-bold">Username</label>
+                                        <input type="text" class="form-control rounded-pill"
+                                            v-model="store.dataUserbyId.username" readonly>
+                                    </div>
+                                    <div class="form-outline mb-4">
+                                        <label class="form-label fw-bold">Phone Number</label>
+                                        <input type="text" class="form-control rounded-pill"
+                                            v-model="store.dataUserbyId.phoneNumber" readonly>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="col-sm-2 p-2">
+                                <button class="btn btn-primary text-white rounded-pill w-100 mt-sm-3" type="button">
+                                    <span class="bi bi-pencil"></span>
+                                    &nbsp;Edit Data
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
