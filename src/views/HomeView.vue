@@ -8,7 +8,7 @@ const store = useStore()
 store.isLoggedIn()
 
 const fetchInventory = async () => {
-  await store.getData()
+  await store.getAllInventory()
 }
 
 onMounted(() => {
@@ -23,18 +23,18 @@ function filteredList(dataInventory) {
   }
   else {
     return dataInventory.filter(item =>
-      item.namaBarang.toLowerCase().includes(input.value.toLowerCase()))
+      item.itemName.toLowerCase().includes(input.value.toLowerCase()))
   }
 }
 
-// function untuk mengurutkan data berdasarkan jumlah
+// function untuk mengurutkan data berdasarkan quantity
 let { sortStockDescending, sortStockAscending, sortProductDescending, sortProductAscending } = ref(false)
 function stockDescending(dataInventory) {
   sortStockDescending = true
   sortStockAscending = false
   sortProductAscending = false
   sortProductDescending = false
-  return dataInventory.sort((a, b) => b.jumlah - a.jumlah)
+  return dataInventory.sort((a, b) => b.quantity - a.quantity)
 }
 
 function stockAscending(dataInventory) {
@@ -42,7 +42,7 @@ function stockAscending(dataInventory) {
   sortStockDescending = false
   sortProductAscending = false
   sortProductDescending = false
-  return dataInventory.sort((a, b) => a.jumlah - b.jumlah)
+  return dataInventory.sort((a, b) => a.quantity - b.quantity)
 }
 
 // function untuk mengurutkan data berdasarkan nama
@@ -51,7 +51,7 @@ function productDescending(dataInventory) {
   sortStockDescending = false
   sortProductDescending = true
   sortProductAscending = false
-  return dataInventory.sort((a, b) => b.namaBarang.localeCompare(a.namaBarang))
+  return dataInventory.sort((a, b) => b.itemName.localeCompare(a.itemName))
 
 }
 
@@ -60,7 +60,7 @@ function productAscending(dataInventory) {
   sortStockDescending = false
   sortProductAscending = true
   sortProductDescending = false
-  return dataInventory.sort((a, b) => a.namaBarang.localeCompare(b.namaBarang))
+  return dataInventory.sort((a, b) => a.itemName.localeCompare(b.itemName))
 }
 
 watch(input)
@@ -136,16 +136,16 @@ watch(input)
               <!-- card isi data tersedia (diambil dari data dummy) -->
               <div class="col" v-for="item in filteredList(store.dataInventory)" :key="item.id" :item="item">
                 <div class="card">
-                  <img :src="item.urlPicture" class="img-thumbnail img-fluid" alt="..." height="300">
+                  <img :src="item.pictureUrl" class="img-thumbnail img-fluid" alt="..." height="300">
                   <div class="card-body">
                     <div class="d-flex flex-row justify-content-between align-items-center mb-2">
-                      <h5 class="card-title text-truncate text-capitalize mb-0">{{ item.namaBarang }}</h5>
+                      <h5 class="card-title text-truncate text-capitalize mb-0">{{ item.itemName }}</h5>
                       <i class="bi bi-info-circle text-success" :data-id="item.id" @click="getID(item.id)"
                         data-bs-toggle="modal" :data-bs-target="'#infoModal-' + item.id">
                       </i>
                     </div>
-                    <p class="card-subtitle mb-2 text-body-secondary text-capitalize"> Kategori: {{ item.kategori }}</p>
-                    <p class="card-text"> Stock: {{ item.jumlah }}</p>
+                    <p class="card-subtitle mb-2 text-body-secondary text-capitalize"> Kategori: {{ item.category }}</p>
+                    <p class="card-text"> Stock: {{ item.quantity }}</p>
                   </div>
                 </div>
 
@@ -155,23 +155,23 @@ watch(input)
                   <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
                     <div class="modal-content">
                       <div class="modal-header">
-                        <h5 class="modal-title text-capitalize" id="exampleModalLabel">{{ item.namaBarang }}</h5>
+                        <h5 class="modal-title text-capitalize" id="exampleModalLabel">{{ item.itemName }}</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                       </div>
                       <div class="modal-body">
                         <div class="row">
                           <div class="col-sm-4 text-sm-center">
-                            <img :src="item.urlPicture" class="img-fluid" alt="..." height="10">
+                            <img :src="item.pictureUrl" class="img-fluid" alt="..." height="10">
                           </div>
                           <div class="col">
                             <ul class="list-group">
                               <li class="list-group-item bg-transparent text-capitalize"><b>Kategori</b>: {{
-                                item.kategori }}
+                                item.category }}
                               </li>
-                              <li class="list-group-item bg-transparent text-capitalize"><b>Lokasi</b>: {{ item.lokasi
+                              <li class="list-group-item bg-transparent text-capitalize"><b>Lokasi</b>: {{ item.location
                                 }}</li>
-                              <li class="list-group-item bg-transparent"><b> Stock </b>: {{ item.jumlah }}</li>
-                              <li class="list-group-item bg-transparent"><b>Deskripsi</b>: {{ item.deskripsi }}</li>
+                              <li class="list-group-item bg-transparent"><b> Stock </b>: {{ item.quantity }}</li>
+                              <li class="list-group-item bg-transparent"><b>Deskripsi</b>: {{ item.description }}</li>
                             </ul>
                           </div>
                         </div>
