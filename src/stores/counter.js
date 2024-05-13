@@ -16,18 +16,16 @@ export const useStore = defineStore('useStore', () => {
         email,
         password
       }
-      const response = await axios.post('http://localhost:3000/api/user/login', data)
-      // console.log(response.data.data.idUser);
+      const response = await axios.post('http://localhost:4000/api/auth/login', data) 
       token.value = response.data.data.token
       localStorage.setItem('token', token.value)
-      localStorage.setItem('id', response.data.data.idUser)
+      localStorage.setItem('id', response.data.data.id)
       router.push({name: 'home'})
-      return response.data.data.idUser
     } catch (error) {
-      console.log(error);
+      console.log(error); 
       Swal.fire({
         icon: 'error',
-        text: error.request.response.split('"')[7],
+        text: error.response.data.message,
       })
     }
   }
@@ -61,14 +59,16 @@ export const useStore = defineStore('useStore', () => {
   })
   
   // function register
-  const register = async (username, email, password) => {
+  const register = async (userName, email, password, confirmPassword, phoneNumber) => {
     try {
       const data = {
-        username,
+        userName,
         email,
-        password
+        password,
+        phoneNumber,
+        confirmPassword
       }
-      await axios.post('http://localhost:3000/api/user', data)
+      await axios.post('http://localhost:4000/api/auth/signup', data)
       Swal.fire({
         icon: 'success',
         text: 'Registrasi Berhasil, Klik OK untuk login',
@@ -76,22 +76,28 @@ export const useStore = defineStore('useStore', () => {
       router.push({name: 'login'})
     } catch (error) {
       console.log(error);
+      Swal.fire({
+        icon: 'error',
+        text: error.response.data.message
+      })
     }
   }
   // function untuk mengambil data inventory
   
-  const getData = async () => {
+  const getAllInventory = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/api/inventaris',{
+      const response = await axios.get('http://localhost:4000/api/inventory/detail/all',{
         headers: {
-          token: localStorage.getItem('token')
+          Authorization: `Bearer ${localStorage.getItem('token')}`
         }
       })
       dataInventory.value = response.data.data
-      // console.log(localStorage.getItem('token'));
-      
     } catch (error) {
       console.error("Error mengambil data", error.message)
+      Swal.fire({
+        icon: 'error',
+        text: error.response.data.message
+      })
   }
 }
 
@@ -100,14 +106,18 @@ export const useStore = defineStore('useStore', () => {
 
   const getPeminjaman = async () => {
     try {
-      const response = await axios.get(`http://localhost:3000/api/peminjaman/user/${localStorage.getItem('id')}`,{
+      const response = await axios.get(`http://localhost:4000/api/loans/history`,{
         headers: {
-          token: localStorage.getItem('token')
+          Authorization: `Bearer ${localStorage.getItem('token')}`
         }
       })
       dataPeminjaman.value = response.data.data
     } catch (error) {
       console.error("Error mengambil data", error);
+      Swal.fire({
+        icon: 'error',
+        text: error.response.data.message
+      })
     }
   }
 
@@ -116,33 +126,24 @@ export const useStore = defineStore('useStore', () => {
 
   const tambahDataPeminjaman = async (pinjamanUser, quantity, borrowedDate, returnDate)=>{
     try {
-      const selected = dataInventory.value.find(item => item.namaBarang === pinjamanUser)
+      const selected = dataInventory.value.find(item => item.itemName === pinjamanUser)
       let id = 1 
       if (dataPeminjaman.value.length > 0) {
         id = Math.max.apply(null, dataPeminjaman.value.map(item => item.id)) + 1
       }
-      const response = await axios.post('http://localhost:3000/api/peminjaman', {
+      await axios.post('http://localhost:4000/api/loans/create ', {
         // id: parseInt(dataPeminjaman.value.length + 1),
         id: id, // id peminjaman 
-        idBarang: selected.id,
-        idPeminjam : localStorage.getItem('id'), 
-        jumlah:parseInt(quantity),
-        tanggalPinjam: borrowedDate,
-        tanggalKembali: returnDate,
+        idItem: selected.id,
+        idUser : localStorage.getItem('id'), 
+        quantity:parseInt(quantity),
+        dateLoan: borrowedDate,
+        dateReturn: returnDate,
         status: "Sedang Dipinjam",
       },
       {
         headers: {
-          token: localStorage.getItem('token')
-        }
-      }
-    )
-      await axios.put(`http://localhost:3000/api/inventaris/${selected.id}`, {
-        jumlah:parseInt(selected.jumlah) - parseInt(response.data.data.jumlah),
-      },
-      {
-        headers: {
-          token: localStorage.getItem('token')
+          Authorization: `Bearer ${localStorage.getItem('token')}`
         }
       })
       Swal.fire({
@@ -153,40 +154,45 @@ export const useStore = defineStore('useStore', () => {
       router.push({name: 'histori'})
     } catch (error) {
       console.error("Error menambah data", error);
+      Swal.fire({
+        icon: 'error',
+        text: error.response.data.message
+      })
     };
   }
 
 
-
-  // function untuk menampilkan data user 
-  const getUser = async () => {
+  // function untuk menampilkan data user by id 
+  const getUserById = async () => {
     try {
-      const response = await axios.get(`http://localhost:3000/api/user/${localStorage.getItem('id')}`, {
+      const response = await axios.get(`http://localhost:4000/api/auth/detail?id=${localStorage.getItem('id')}`, {
         headers: {
-          token: localStorage.getItem('token')
+          Authorization: `Bearer ${localStorage.getItem('token')}`
         }
       })
       dataUserbyId.value = response.data.data
     } catch (error) {
       console.error("Error mengambil data", error.message);
+      Swal.fire({
+        icon: 'error',
+        text: error.response.data.message
+      })
     }
   }
-  const username = dataUserbyId.username
-  const email = dataUserbyId.value.email
+
 
   return { 
-    email, 
-    username,
     dataInventory,
     dataPeminjaman,
     dataTambahPinjaman,
     dataUserbyId,
     tambahDataPeminjaman,
     getPeminjaman, 
-    getData,
+    getAllInventory,
     register,
     login, 
     logout,
     isLoggedIn,
-    getUser}
+    getUserById
+  }
 })
