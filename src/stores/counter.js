@@ -8,6 +8,76 @@ export const useStore = defineStore('useStore', () => {
   const dataUserbyId = ref({})
   const dataInventory = ref([])
   
+  // function login
+  const token = ref('')
+  const login = async (email, password) => {
+    try {
+      const data = {
+        email,
+        password
+      }
+      const response = await axios.post('http://localhost:3000/api/user/login', data)
+      // console.log(response.data.data.idUser);
+      token.value = response.data.data.token
+      localStorage.setItem('token', token.value)
+      localStorage.setItem('id', response.data.data.idUser)
+      router.push({name: 'home'})
+      return response.data.data.idUser
+    } catch (error) {
+      console.log(error);
+      Swal.fire({
+        icon: 'error',
+        text: error.request.response.split('"')[7],
+      })
+    }
+  }
+  
+  // function logout
+  const logout = () => {
+    localStorage.clear()
+    router.push({name: 'login'})
+  }
+  
+  // check apakah user sedang login
+  const isLoggedIn = (() => {
+    if (!localStorage.getItem('token')) {
+      if (router.currentRoute.value.name === 'login') {
+        router.push({name:'login'})
+      }
+      else if (router.currentRoute.value.name === 'register') {
+        router.push({name:'register'})
+      }
+      else{
+        router.push({name: 'login'})
+        Swal.fire({
+          icon: 'error',
+          text: 'Silakan login terlebih dahulu',
+        })
+      }      
+    }
+    else if (router.currentRoute.value.name === 'login' || router.currentRoute.value.name === 'register') {
+      router.push({name: 'home'})
+    }
+  })
+  
+  // function register
+  const register = async (username, email, password) => {
+    try {
+      const data = {
+        username,
+        email,
+        password
+      }
+      await axios.post('http://localhost:3000/api/user', data)
+      Swal.fire({
+        icon: 'success',
+        text: 'Registrasi Berhasil, Klik OK untuk login',
+      })
+      router.push({name: 'login'})
+    } catch (error) {
+      console.log(error);
+    }
+  }
   // function untuk mengambil data inventory
   
   const getData = async () => {
@@ -24,6 +94,8 @@ export const useStore = defineStore('useStore', () => {
       console.error("Error mengambil data", error.message)
   }
 }
+
+// function untuk lihat history peminjaman
   const dataPeminjaman = ref([])
 
   const getPeminjaman = async () => {
@@ -84,76 +156,7 @@ export const useStore = defineStore('useStore', () => {
     };
   }
 
-  // function register
-  const register = async (username, email, password) => {
-    try {
-      const data = {
-        username,
-        email,
-        password
-      }
-      await axios.post('http://localhost:3000/api/user', data)
-      Swal.fire({
-        icon: 'success',
-        text: 'Registrasi Berhasil, Klik OK untuk login',
-      })
-      router.push({name: 'login'})
-    } catch (error) {
-      console.log(error);
-    }
-  }
 
-  // function login
-  const token = ref('')
-  const login = async (email, password) => {
-    try {
-      const data = {
-        email,
-        password
-      }
-      const response = await axios.post('http://localhost:3000/api/user/login', data)
-      // console.log(response.data.data.idUser);
-      token.value = response.data.data.token
-      localStorage.setItem('token', token.value)
-      localStorage.setItem('id', response.data.data.idUser)
-      router.push({name: 'home'})
-      return response.data.data.idUser
-    } catch (error) {
-      console.log(error);
-      Swal.fire({
-        icon: 'error',
-        text: error.request.response.split('"')[7],
-      })
-    }
-  }
-
-  // function logout
-  const logout = () => {
-    localStorage.clear()
-    router.push({name: 'login'})
-  }
-
-  // check apakah user sedang login
-  const isLoggedIn = (() => {
-    if (!localStorage.getItem('token')) {
-      if (router.currentRoute.value.name === 'login') {
-        router.push({name:'login'})
-      }
-      else if (router.currentRoute.value.name === 'register') {
-        router.push({name:'register'})
-      }
-      else{
-        router.push({name: 'login'})
-        Swal.fire({
-          icon: 'error',
-          text: 'Silakan login terlebih dahulu',
-        })
-      }      
-    }
-    else if (router.currentRoute.value.name === 'login' || router.currentRoute.value.name === 'register') {
-      router.push({name: 'home'})
-    }
-  })
 
   // function untuk menampilkan data user 
   const getUser = async () => {
