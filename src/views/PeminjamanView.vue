@@ -6,12 +6,12 @@ import { ref, watch } from 'vue';
 
 const store = useStore()
 store.isLoggedIn()
-store.getUser()
-store.getData()
+store.getUserById()
+store.getAllInventory()
 
 const dataIventory = store.dataInventory
 
-const namaBarang = ref(dataIventory.map(item => item.namaBarang))
+const itemName = ref(dataIventory.map(item => item.itemName))
 
 const stock = ref(null)
 const selectedBarang = ref(null)
@@ -22,12 +22,10 @@ const returnDate = ref(null)
 
 watch(selectedBarang, (newValue) => {
   if (newValue) {
-    const selected = dataIventory.find(item => item.namaBarang === newValue)
-    stock.value = selected.jumlah
+    const selected = dataIventory.find(item => item.itemName === newValue)
+    stock.value = selected.quantity
   }
 })
-const username = store.username
-const email = store.email
 
 const today = new Date().toISOString().split('T')[0]
 
@@ -46,7 +44,7 @@ const today = new Date().toISOString().split('T')[0]
         <div class="col my-sm-5 p-3">
           <div class="card p-4 shadow-lg">
             <h1>Peminjaman</h1>
-            <h5 class="fw-normal">Halo, <b class="text-primary">{{ store.dataUserbyId.username }}</b></h5>
+            <h5 class="fw-normal">Halo, <b class="text-primary">{{ store.dataUserbyId.userName }}</b></h5>
             <p>Silakan isi form peminjaman di bawah ini</p>
 
             <form>
@@ -55,7 +53,7 @@ const today = new Date().toISOString().split('T')[0]
                 <div class="my-2">
                   <label for="username" class="form-label fw-bold">Username</label>
                   <input type="text" class="form-control rounded-pill" placeholder="username"
-                    v-model="store.dataUserbyId.username" disabled readonly>
+                    v-model="store.dataUserbyId.userName" disabled readonly>
                 </div>
                 <!-- input email -->
                 <div class="my-2">
@@ -69,9 +67,9 @@ const today = new Date().toISOString().split('T')[0]
                   <select class="form-select rounded-pill text-capitalize" v-model="selectedBarang"
                     placeholder="Pilih Barang" required>
                     <option disabled selected>Pilih Barang</option>
-                    <!-- <option v-for="item in store.dataInventory.map(item => item.namaBarang)" :key="item">{{ item }}
+                    <!-- <option v-for="item in store.dataInventory.map(item => item.itemName)" :key="item">{{ item }}
                     </option> -->
-                    <option v-for="item in namaBarang" :key="item">{{ item }}</option>
+                    <option v-for="item in itemName" :key="item">{{ item }}</option>
                   </select>
                 </div>
                 <!-- input quantity -->
