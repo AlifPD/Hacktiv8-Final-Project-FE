@@ -3,7 +3,7 @@ import { useStore } from '@/stores/counter';
 import { RouterLink } from 'vue-router';
 
 const store = useStore()
-store.getUser()
+store.getUserById()
 </script>
 
 <template>
@@ -31,7 +31,7 @@ store.getUser()
             <a class="nav-link dropdown-toggle align-items-center" href="#" role="button" data-bs-toggle="dropdown"
               aria-expanded="false">
               <i class="bi bi-person-circle" style="font-size: 2rem"></i>
-              {{ store.dataUserbyId.username }}
+              {{ store.dataUserbyId.userName }}
             </a>
             <ul class="dropdown-menu justify-content-between">
               <li>
