@@ -15,7 +15,7 @@ const itemName = ref(dataIventory.map(item => item.itemName))
 
 const stock = ref(null)
 const selectedBarang = ref(null)
-const quantity = ref(0)
+const quantity = ref('')
 const borrowedDate = ref(null)
 const returnDate = ref(null)
 
@@ -48,7 +48,7 @@ const today = new Date().toISOString().split('T')[0]
             <p>Silakan isi form peminjaman di bawah ini</p>
 
             <form>
-              <div class="row row-cols-1 row-cols-sm-2 mt-3g-3">
+              <div class="row row-cols-1 row-cols-sm-2 mt-3 g-3">
                 <!-- input username -->
                 <div class="my-2">
                   <label for="username" class="form-label fw-bold">Username</label>
