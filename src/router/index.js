@@ -5,6 +5,7 @@ import HistoryView from '@/views/HistoryView.vue'
 import LoginView from '@/views/LoginView.vue'
 import RegistrationPage from '@/views/RegistrationPage.vue'
 import AccountView from '@/views/AccountView.vue'
+import NotFoundView from '@/views/NotFoundView.vue'
 
 
 const router = createRouter({
@@ -40,6 +41,11 @@ const router = createRouter({
       path: '/register',
       name: 'register',
       component: RegistrationPage
+    },
+    {
+      path: '/:notFound',
+      name: 'notFound',
+      component: NotFoundView
     }
   ]
 })
