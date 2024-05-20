@@ -15,9 +15,14 @@ const fetchPeminjaman = async () => {
 const fetchInventory = async () => {
   await store.getAllInventory()
 }
+
+const fetchUserById = async () => {
+  await store.getUserById()
+}
 onMounted(() => {
   fetchPeminjaman()
   fetchInventory()
+  fetchUserById()
 })
 
 let input = ref('')
@@ -77,21 +82,32 @@ watch(input, filteredList(store.dataPeminjaman))
                     <th scope="col" class="text-center">Tanggal Peminjaman</th>
                     <th scope="col" class="text-center">Tanggal Pengembalian</th>
                     <th scope="col" class="text-center">Status</th>
+                    <th scope="col" class="text-center" v-if="store.dataUserbyId.userType === '0'">Action</th>
                   </tr>
                 </thead>
                 <tbody class="table-group-divider">
                   <tr v-for="(peminjaman, index) in filteredList(store.dataPeminjaman) ">
-                    <td class="text-center align-middle">{{ index + 1 }}</td>
-                    <td class="text-center align-middle text-capitalize">{{ peminjaman.itemName }}</td>
-                    <td class="text-center align-middle">{{ peminjaman.quantity }}</td>
-                    <td class="text-center align-middle">{{ peminjaman.dateLoan.toString().split('T')[0] }}</td>
-                    <td class="text-center align-middle">{{ peminjaman.dateReturn.toString().split('T')[0] }}</td>
-                    <td class="text-center align-middle text-danger" v-if="peminjaman.status == 'Belum Dikembalikan'">
-                      {{ peminjaman.status }}</td>
-                    <td class="text-center align-middle text-success" v-if="peminjaman.status == 'Sudah Dikembalikan'">
-                      {{ peminjaman.status }}</td>
-                    <td class="text-center align-middle text-primary"
-                      v-else-if="peminjaman.status == 'Sedang Dipinjam'">{{ peminjaman.status }}</td>
+                    <td class="text-center align-middle p-auto">{{ index + 1 }}</td>
+                    <td class="text-center align-middle p-auto text-capitalize">{{ peminjaman.itemName }}</td>
+                    <td class="text-center align-middle p-auto">{{ peminjaman.quantity }}</td>
+                    <td class="text-center align-middle p-auto">{{ peminjaman.dateLoan.toString().split('T')[0] }}</td>
+                    <td class="text-center align-middle p-auto">{{ peminjaman.dateReturn.toString().split('T')[0] }}
+                    </td>
+                    <td class="text-center align-middle p-auto text-danger"
+                      v-if="peminjaman.status == 'Belum Dikembalikan'">
+                      {{ peminjaman.status }}
+                    </td>
+                    <td class="text-center align-middle p-auto text-success"
+                      v-if="peminjaman.status == 'Sudah Dikembalikan'">
+                      {{ peminjaman.status }}
+                    </td>
+                    <td class="text-center align-middle p-auto text-primary"
+                      v-else-if="peminjaman.status == 'Sedang Dipinjam'">{{ peminjaman.status }}
+                    </td>
+                    <td class="text-center align-middle p-auto" v-if="store.dataUserbyId.userType === '0'">
+                      <i class="bi bi-pencil-square btn text-warning"></i>
+                      <i class="bi bi-trash btn text-danger"></i>
+                    </td>
                   </tr>
                   <tr v-if="!input && filteredList(store.dataPeminjaman).length == 0">
                     <th class="text-center align-middle" colspan="7">
