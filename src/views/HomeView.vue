@@ -3,7 +3,7 @@ import Sidebar from '../components/Sidebar.vue'
 import { useStore } from '@/stores/counter';
 import { getID } from '../../functions/getID'
 import Navbar from '../components/Navbar.vue'
-import { onMounted, ref, watch } from 'vue'
+import { onBeforeUpdate, onMounted, onUpdated, ref, watch } from 'vue'
 const store = useStore()
 store.isLoggedIn()
 
@@ -11,56 +11,90 @@ const fetchInventory = async () => {
   await store.getAllInventory()
 }
 
+// const untuk add data 
+
+const addItemName = ref('')
+const addCategory = ref('')
+const addQuantity = ref('')
+const addLocation = ref('')
+const addPictureUrl = ref('')
+const addDescription = ref('')
+
 onMounted(() => {
   fetchInventory()
 })
 
-
 let input = ref('')
-function filteredList(dataInventory) {
+function filteredList(fetchInventory) {
   if (!input.value) {
-    return dataInventory
+    return fetchInventory
   }
   else {
-    return dataInventory.filter(item =>
+    return fetchInventory.filter(item =>
       item.itemName.toLowerCase().includes(input.value.toLowerCase()))
   }
 }
 
 // function untuk mengurutkan data berdasarkan quantity
 let { sortStockDescending, sortStockAscending, sortProductDescending, sortProductAscending } = ref(false)
-function stockDescending(dataInventory) {
+function stockDescending(fetchInventory) {
   sortStockDescending = true
   sortStockAscending = false
   sortProductAscending = false
   sortProductDescending = false
-  return dataInventory.sort((a, b) => b.quantity - a.quantity)
+  return fetchInventory.sort((a, b) => b.quantity - a.quantity)
 }
 
-function stockAscending(dataInventory) {
+function stockAscending(fetchInventory) {
   sortStockAscending = true
   sortStockDescending = false
   sortProductAscending = false
   sortProductDescending = false
-  return dataInventory.sort((a, b) => a.quantity - b.quantity)
+  return fetchInventory.sort((a, b) => a.quantity - b.quantity)
 }
 
 // function untuk mengurutkan data berdasarkan nama
-function productDescending(dataInventory) {
+function productDescending(fetchInventory) {
   sortStockAscending = false
   sortStockDescending = false
   sortProductDescending = true
   sortProductAscending = false
-  return dataInventory.sort((a, b) => b.itemName.localeCompare(a.itemName))
+  return fetchInventory.sort((a, b) => b.itemName.localeCompare(a.itemName))
 
 }
 
-function productAscending(dataInventory) {
+function productAscending(fetchInventory) {
   sortStockAscending = false
   sortStockDescending = false
   sortProductAscending = true
   sortProductDescending = false
-  return dataInventory.sort((a, b) => a.itemName.localeCompare(b.itemName))
+  return fetchInventory.sort((a, b) => a.itemName.localeCompare(b.itemName))
+}
+
+// function untuk tambah data 
+
+async function handleAddInventory() {
+  await store.addInventory(addItemName.value, addCategory.value, addQuantity.value, addLocation.value, addPictureUrl.value, addDescription.value)
+  fetchInventory()
+  // clear input
+  addItemName.value = ''
+  addCategory.value = ''
+  addQuantity.value = ''
+  addLocation.value = ''
+  addPictureUrl.value = ''
+  addDescription.value = ''
+}
+
+// function untuk delete data
+async function handleDeleteInventory(itemId) {
+  await store.deleteInventory(itemId)
+  fetchInventory()
+}
+
+// function untuk update data 
+async function handleUpdateInventory(itemId, itemName, category, quantity, location, pictureUrl, description) {
+  await store.updateInventory(itemId, itemName, category, quantity, location, pictureUrl, description)
+  fetchInventory()
 }
 
 watch(input)
@@ -90,7 +124,7 @@ watch(input)
                 </div>
               </div>
 
-              <div class="col-sm my-3">
+              <div class="col-2 my-3 d-flex justify-content-sm-center">
                 <button class="btn btn-primary text-white rounded-pill dropdown-toggle" type="button"
                   data-bs-toggle="dropdown">
                   <i class="bi bi-sliders"></i>
@@ -130,6 +164,13 @@ watch(input)
                   </li>
                 </ul>
               </div>
+
+              <div class="col my-3 mx-5 mx-sm-0">
+                <span class="btn btn-success text-white rounded-pill" data-bs-toggle="modal" data-bs-target="#addModal">
+                  <i class="bi bi-plus-circle h-100"></i>
+                  Tambah Inventaris
+                </span>
+              </div>
             </div>
 
             <div class="row row-cols-1 row-cols-sm-3 g-4">
@@ -144,7 +185,8 @@ watch(input)
                         data-bs-toggle="modal" :data-bs-target="'#infoModal-' + item.id">
                       </i>
                     </div>
-                    <p class="card-subtitle mb-2 text-body-secondary text-capitalize"> Kategori: {{ item.category }}</p>
+                    <p class="card-subtitle mb-2 text-body-secondary text-capitalize text-truncate"> Kategori: {{
+                      item.category }}</p>
                     <p class="card-text"> Stock: {{ item.quantity }}</p>
                   </div>
                 </div>
@@ -177,7 +219,125 @@ watch(input)
                         </div>
                       </div>
                       <div class="modal-footer">
+                        <button type="button" class="btn btn-warning" data-bs-toggle="modal"
+                          :data-bs-target="'#updateModal-' + item.id" :data-id="item.id">Edit</button>
+                        <button type="button" class="btn btn-danger"
+                          @click.prevent="handleDeleteInventory(item.id)">Delete</button>
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- modal add inventory -->
+                <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title text-capitalize" id="exampleModalLabel">Tambah Inventaris Baru</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                        <form>
+                          <div class="row row-cols-1 row-cols-sm-2">
+                            <div class="form-outline my-2">
+                              <label class="form-label fw-bold">Item Name</label>
+                              <input type="text" class="form-control rounded-pill" placeholder="Masukkan item name"
+                                required="true" v-model="addItemName" />
+                            </div>
+                            <div class="form-outline my-2">
+                              <label class="form-label fw-bold">Category</label>
+                              <input type="text" class="form-control rounded-pill" placeholder="Masukkan category"
+                                required="true" v-model="addCategory" />
+                            </div>
+                            <div class="form-outline my-2">
+                              <label class="form-label fw-bold">Quantity</label>
+                              <input type="number" class="form-control rounded-pill" placeholder="Masukkan quantity"
+                                required="true" v-model="addQuantity" v-bind:min="1" />
+                              <p class="text-danger mb-0 mt-2 ms-2" v-if="addQuantity < 1 && addQuantity">Jumlah harus
+                                lebih dari 0!
+                              </p>
+                            </div>
+                            <div class="form-outline my-2">
+                              <label class="form-label fw-bold">Location</label>
+                              <input type="text" class="form-control rounded-pill" placeholder="Masukkan lokasi"
+                                required="true" v-model="addLocation" />
+                            </div>
+                            <div class="form-outline my-2">
+                              <label class="form-label fw-bold">Picture Url</label>
+                              <input type="text" class="form-control rounded-pill" placeholder="Masukkan picture url"
+                                required="true" v-model="addPictureUrl" />
+                            </div>
+                            <div class="form-outline my-2">
+                              <label class="form-label fw-bold">Description</label>
+                              <textarea class="form-control rounded" id="exampleFormControlTextarea1" rows="3"
+                                placeholder="Masukkan deskripsi" required="true" v-model="addDescription"></textarea>
+                            </div>
+                          </div>
+                        </form>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                        <button type="button" class="btn btn-primary" @click.prevent="handleAddInventory()"
+                          :disabled="!addItemName || !addCategory || !addQuantity || !addLocation || !addPictureUrl || !addDescription || addQuantity <= 0">Simpan</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- modal update inventory -->
+                <div class="modal fade" :id="'updateModal-' + item.id" tabindex="-1" aria-labelledby="updateModalLabel"
+                  aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-fullscreen">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title text-capitalize" id="exampleModalLabel">Update Inventaris Baru</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                        <form>
+                          <div class="row row-cols-1 row-cols-sm-2">
+                            <div class="form-outline my-2">
+                              <label class="form-label fw-bold">Item Name</label>
+                              <input type="text" class="form-control rounded-pill" placeholder="Masukkan item name"
+                                required="true" v-model="item.itemName" />
+                            </div>
+                            <div class="form-outline my-2">
+                              <label class="form-label fw-bold">Category</label>
+                              <input type="text" class="form-control rounded-pill" placeholder="Masukkan category"
+                                required="true" v-model="item.category" />
+                            </div>
+                            <div class="form-outline my-2">
+                              <label class="form-label fw-bold">Quantity</label>
+                              <input type="number" class="form-control rounded-pill" placeholder="Masukkan quantity"
+                                required="true" v-model="item.quantity" v-bind:min="1" />
+                              <p class="text-danger mb-0 mt-2 ms-2" v-if="addQuantity < 1 && addQuantity">Jumlah harus
+                                lebih dari 0!
+                              </p>
+                            </div>
+                            <div class="form-outline my-2">
+                              <label class="form-label fw-bold">Location</label>
+                              <input type="text" class="form-control rounded-pill" placeholder="Masukkan lokasi"
+                                required="true" v-model="item.location" />
+                            </div>
+                            <div class="form-outline my-2">
+                              <label class="form-label fw-bold">Picture Url</label>
+                              <input type="text" class="form-control rounded-pill" placeholder="Masukkan picture url"
+                                required="true" v-model="item.pictureUrl" />
+                            </div>
+                            <div class="form-outline my-2">
+                              <label class="form-label fw-bold">Description</label>
+                              <textarea class="form-control rounded" id="exampleFormControlTextarea1" rows="3"
+                                placeholder="Masukkan deskripsi" required="true" v-model="item.description"></textarea>
+                            </div>
+                          </div>
+                        </form>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                        <button type="button" class="btn btn-primary"
+                          @click.prevent="handleUpdateInventory(item.id, item.itemName, item.category, item.quantity, item.location, item.pictureUrl, item.description)"
+                          :disabled="!item.itemName || !item.category || !item.quantity || !item.location || !item.pictureUrl || !item.description || item.quantity <= 0">Simpan</button>
                       </div>
                     </div>
                   </div>
