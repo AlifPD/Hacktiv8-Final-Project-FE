@@ -22,11 +22,19 @@ export const useStore = defineStore('useStore', () => {
       localStorage.setItem('id', response.data.data.id)
       router.push({name: 'home'})
     } catch (error) {
-      console.log(error); 
-      Swal.fire({
-        icon: 'error',
-        text: error.response.data.message,
-      })
+      console.error(error); 
+      if(error.code === "ERR_NETWORK"){
+        Swal.fire({
+          icon: 'error',
+          text: error.message,
+        })
+      }
+      else{
+        Swal.fire({
+          icon: 'error',
+          text: error.response.data.message,
+        })
+      }
     }
   }
   
@@ -180,6 +188,120 @@ export const useStore = defineStore('useStore', () => {
     }
   }
 
+  // function untuk menambah inventaris 
+
+  const addInventory = async(itemname, category, quantity, location, pictureUrl, description) => {
+    try {
+      let data = {
+        itemName: itemname, 
+        quantity: parseInt(quantity),
+        category: category,
+        location: location,
+        pictureUrl: pictureUrl,
+        description: description
+      }
+      Swal.fire({
+        icon: 'question',
+        text: 'Apakah data yang ingin ditambahkan sudah benar?',
+        showConfirmButton: true, 
+        showCancelButton: true,
+        confirmButtonText: 'Ya',
+        cancelButtonText: 'Batal'
+      })
+      .then(async (result) => {
+        if(result.isConfirmed){
+          await axios.post('http://localhost:4000/api/inventory/create', data, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('token')}`
+            }
+          })
+          Swal.fire({
+            icon: 'success',
+            text: "Berhasil tambah inventaris",
+          })
+          console.log(data);
+        }
+      })
+      .catch((error) => {
+        console.error('Error menambah data', error)
+        Swal.fire({
+          icon: 'error',
+          text: error.response.data.message
+        })
+      })
+    } catch (error) {}
+  }
+
+  // function delete inventory 
+
+  const deleteInventory = async (id) => {
+    Swal.fire({
+      icon: 'question',
+      text: 'Apakah Anda yakin ingin menghapus item ini?',
+      showConfirmButton: true, 
+      showCancelButton: true,
+      confirmButtonText: 'Ya',
+      cancelButtonText: 'Batal'
+    }).then(async (result) => {
+      if(result.isConfirmed){
+        await axios.delete(`http://localhost:4000/api/inventory/delete?id=${id}` ,{
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        })
+        console.log("ini id: ",id);
+        Swal.fire({
+          icon: 'success',
+          text: "Berhasil hapus item",
+        })
+      }
+    }).catch((error) => {
+      console.error('Error menghapus data', error)
+      Swal.fire({
+        icon: 'error',
+        text: error.response.data.message
+      })
+    })
+  }
+
+  const updateInventory = async (id, itemName, category, quantity, location, pictureUrl, description) => {
+    Swal.fire({
+      icon: 'question',
+      text: 'Apakah data yang ingin diubah sudah benar?',
+      showConfirmButton: true, 
+      showCancelButton: true,
+      confirmButtonText: 'Ya',
+      cancelButtonText: 'Batal'
+    })
+    .then(async (result) => {
+      if(result.isConfirmed){
+        const data = {
+          itemName: itemName, 
+          quantity: parseInt(quantity),
+          category: category,
+          location: location,
+          pictureUrl: pictureUrl,
+          description: description
+        }
+        await axios.put(`http://localhost:4000/api/inventory/update?id=${id}`, data, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        })
+        Swal.fire({
+          icon: 'success',
+          text: "Berhasil ubah item",
+        })
+        }
+    })
+    .catch(error=>{
+      console.error("Error mengubah data", error);
+      Swal.fire({
+        icon: 'error',
+        text: error.response.data.message
+      })
+    })
+  }
 
   return { 
     dataInventory,
@@ -193,6 +315,9 @@ export const useStore = defineStore('useStore', () => {
     login, 
     logout,
     isLoggedIn,
-    getUserById
+    getUserById,
+    addInventory,
+    deleteInventory,
+    updateInventory
   }
 })
