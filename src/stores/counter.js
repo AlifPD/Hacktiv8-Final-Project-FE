@@ -264,6 +264,7 @@ export const useStore = defineStore('useStore', () => {
     })
   }
 
+  // function update inventory
   const updateInventory = async (id, itemName, category, quantity, location, pictureUrl, description) => {
     Swal.fire({
       icon: 'question',
@@ -303,6 +304,39 @@ export const useStore = defineStore('useStore', () => {
     })
   }
 
+  // function untuk delete loan 
+
+  const deleteLoan = async (id) => {
+    Swal.fire({
+      icon: 'question',
+      text: 'Anda yakin data peminjaman ini dihapus?',
+      showConfirmButton: true,
+      showCancelButton: true, 
+      confirmButtonText: 'Ya',
+      cancelButtonText: 'Batal'
+    })
+    .then(async (result)=>{
+      if(result.isConfirmed){
+        await axios.delete(`http://localhost:4000/api/loans/delete?id=${id}`,{
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        })
+        Swal.fire({
+          icon: 'success',
+          text: 'Berhasil hapus data peminjaman!'
+        })
+      }
+    })
+    .catch((error)=>{
+      console.error(error)
+      Swal.fire({
+        icon: 'error',
+        text: error.response.data.message
+      })
+    })
+  }
+
   return { 
     dataInventory,
     dataPeminjaman,
@@ -318,6 +352,7 @@ export const useStore = defineStore('useStore', () => {
     getUserById,
     addInventory,
     deleteInventory,
-    updateInventory
+    updateInventory, 
+    deleteLoan
   }
 })
