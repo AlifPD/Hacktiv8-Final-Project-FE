@@ -11,6 +11,7 @@ const fetchInventory = async () => {
   await store.getAllInventory()
 }
 
+
 // const untuk add data 
 
 const addItemName = ref('')
@@ -23,6 +24,10 @@ const addDescription = ref('')
 onMounted(() => {
   fetchInventory()
 })
+
+// onUpdated(() => {
+//   fetchInventory()
+// })
 
 let input = ref('')
 function filteredList(fetchInventory) {
@@ -71,11 +76,13 @@ function productAscending(fetchInventory) {
   return fetchInventory.sort((a, b) => a.itemName.localeCompare(b.itemName))
 }
 
-// function untuk tambah data 
 
+// function untuk tambah data 
 async function handleAddInventory() {
   await store.addInventory(addItemName.value, addCategory.value, addQuantity.value, addLocation.value, addPictureUrl.value, addDescription.value)
-  fetchInventory()
+  await fetchInventory()
+
+  console.log(await fetchInventory());
   // clear input
   addItemName.value = ''
   addCategory.value = ''
@@ -88,14 +95,19 @@ async function handleAddInventory() {
 // function untuk delete data
 async function handleDeleteInventory(itemId) {
   await store.deleteInventory(itemId)
-  fetchInventory()
+  await fetchInventory()
 }
 
 // function untuk update data 
 async function handleUpdateInventory(itemId, itemName, category, quantity, location, pictureUrl, description) {
   await store.updateInventory(itemId, itemName, category, quantity, location, pictureUrl, description)
-  fetchInventory()
+  await fetchInventory()
 }
+// onUpdated(() => {
+//   handleAddInventory()
+//   handleDeleteInventory()
+//   handleUpdateInventory()
+// })
 
 watch(input)
 
