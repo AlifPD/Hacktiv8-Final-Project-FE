@@ -19,6 +19,11 @@ const fetchInventory = async () => {
 const fetchUserById = async () => {
   await store.getUserById()
 }
+
+const deleteLoan = async (id) => {
+  await store.deleteLoan(id)
+  await fetchPeminjaman()
+}
 onMounted(() => {
   fetchPeminjaman()
   fetchInventory()
@@ -76,6 +81,7 @@ watch(input, filteredList(store.dataPeminjaman))
               <table class="table table-hover">
                 <thead>
                   <tr>
+                    <th scope="col" class="text-center">ID</th>
                     <th scope="col" class="text-center">No</th>
                     <th scope="col" class="text-center">Nama Barang</th>
                     <th scope="col" class="text-center">Jumlah</th>
@@ -87,6 +93,7 @@ watch(input, filteredList(store.dataPeminjaman))
                 </thead>
                 <tbody class="table-group-divider">
                   <tr v-for="(peminjaman, index) in filteredList(store.dataPeminjaman) ">
+                    <td class="text-center align-middle p-auto">{{ peminjaman.id }}</td>
                     <td class="text-center align-middle p-auto">{{ index + 1 }}</td>
                     <td class="text-center align-middle p-auto text-capitalize">{{ peminjaman.itemName }}</td>
                     <td class="text-center align-middle p-auto">{{ peminjaman.quantity }}</td>
@@ -106,7 +113,7 @@ watch(input, filteredList(store.dataPeminjaman))
                     </td>
                     <td class="text-center align-middle p-auto" v-if="store.dataUserbyId.userType === '0'">
                       <i class="bi bi-pencil-square btn text-warning"></i>
-                      <i class="bi bi-trash btn text-danger"></i>
+                      <i class="bi bi-trash btn text-danger" @click.prevent="deleteLoan(peminjaman.id)"></i>
                     </td>
                   </tr>
                   <tr v-if="!input && filteredList(store.dataPeminjaman).length == 0">
