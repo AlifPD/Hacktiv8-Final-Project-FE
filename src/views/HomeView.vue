@@ -3,12 +3,14 @@ import Sidebar from '../components/Sidebar.vue'
 import { useStore } from '@/stores/counter';
 import { getID } from '../../functions/getID'
 import Navbar from '../components/Navbar.vue'
-import { onBeforeUpdate, onMounted, onUpdated, ref, watch } from 'vue'
+import { onBeforeUpdate, onMounted, onUpdated, ref, watch, computed } from 'vue'
 const store = useStore()
 store.isLoggedIn()
 
+let inventoryData = ref([])
 const fetchInventory = async () => {
-  await store.getAllInventory()
+  inventoryData.value = await store.getAllInventory()
+  return inventoryData
 }
 
 
@@ -80,9 +82,8 @@ function productAscending(fetchInventory) {
 // function untuk tambah data 
 async function handleAddInventory() {
   await store.addInventory(addItemName.value, addCategory.value, addQuantity.value, addLocation.value, addPictureUrl.value, addDescription.value)
-  await fetchInventory()
-
-  console.log(await fetchInventory());
+  inventoryData.value = await store.getAllInventory()
+  console.log(inventoryData.value, 'ini inventoryData');
   // clear input
   addItemName.value = ''
   addCategory.value = ''
@@ -95,21 +96,38 @@ async function handleAddInventory() {
 // function untuk delete data
 async function handleDeleteInventory(itemId) {
   await store.deleteInventory(itemId)
-  await fetchInventory()
+  inventoryData.value = await store.getAllInventory()
+  console.log(inventoryData.value, 'ini inventoryData');
 }
 
 // function untuk update data 
 async function handleUpdateInventory(itemId, itemName, category, quantity, location, pictureUrl, description) {
   await store.updateInventory(itemId, itemName, category, quantity, location, pictureUrl, description)
-  await fetchInventory()
+  inventoryData.value = await store.getAllInventory()
+  console.log(inventoryData.value, 'ini inventoryData');
 }
-// onUpdated(() => {
-//   handleAddInventory()
-//   handleDeleteInventory()
-//   handleUpdateInventory()
-// })
 
-watch(input)
+
+const currentPage = ref(1);
+const perPage = ref(6); // limit per page 
+
+const paginatedInventory = computed(() => {
+  const start = (currentPage.value - 1) * perPage.value;
+  const end = start + perPage.value;
+  return filteredList(inventoryData.value).slice(start, end);
+});
+
+const totalPages = computed(() => {
+  return Math.ceil(filteredList(inventoryData.value).length / perPage.value);
+});
+
+const goToPage = (page) => {
+  if (page >= 1 && page <= totalPages.value) {
+    currentPage.value = page;
+  }
+};
+
+watch(input, inventoryData.value)
 
 </script>
 
@@ -145,28 +163,28 @@ watch(input)
 
                 <ul class="dropdown-menu">
                   <li>
-                    <a class="dropdown-item text-primary" href="#" @click="stockDescending(store.dataInventory)">
+                    <a class="dropdown-item text-primary" href="#" @click="stockDescending(inventoryData)">
                       <i class="bi bi-sort-numeric-down-alt"></i>
                       <span>
                         Stock terbanyak
                       </span>
                       <i class="bi bi-check text-success" v-if="sortStockDescending"></i>
                     </a>
-                    <a class="dropdown-item text-primary" href="#" @click="stockAscending(store.dataInventory)">
+                    <a class="dropdown-item text-primary" href="#" @click="stockAscending(inventoryData)">
                       <i class="bi bi-sort-numeric-up-alt"></i>
                       <span>
                         Stock terendah
                       </span>
                       <i class="bi bi-check text-success" v-if="sortStockAscending"></i>
                     </a>
-                    <a class="dropdown-item text-primary" href="#" @click="productDescending(store.dataInventory)">
+                    <a class="dropdown-item text-primary" href="#" @click="productDescending(inventoryData)">
                       <i class="bi bi-sort-alpha-down-alt"></i>
                       <span>
                         Nama Produk (Z-A)
                       </span>
                       <i class="bi bi-check text-success" v-if="sortProductDescending"></i>
                     </a>
-                    <a class="dropdown-item text-primary" href="#" @click="productAscending(store.dataInventory)">
+                    <a class="dropdown-item text-primary" href="#" @click="productAscending(inventoryData)">
                       <i class="bi bi-sort-alpha-up-alt"></i>
                       <span>
                         Nama Produk (A-Z)
@@ -183,11 +201,18 @@ watch(input)
                   Tambah Inventaris
                 </span>
               </div>
+
+              <div class="col my-3 mx-5 mx-sm-0">
+                <span class="btn text-primary">
+                  <i class="bi bi-arrow-clockwise" @click.prevent="fetchInventory()"></i>
+                </span>
+              </div>
             </div>
 
             <div class="row row-cols-1 row-cols-sm-3 g-4">
               <!-- card isi data tersedia (diambil dari data dummy) -->
-              <div class="col" v-for="item in filteredList(store.dataInventory)" :key="item.id" :item="item">
+              <!-- <div class="col" v-for="item in filteredList(store.dataInventory)" :key="item.id" :item="item"> -->
+              <div class="col" v-for="item in paginatedInventory" :key="item.id" :item="item">
                 <div class="card">
                   <img :src="item.pictureUrl" class="img-thumbnail img-fluid" alt="..." height="300">
                   <div class="card-body">
@@ -354,7 +379,6 @@ watch(input)
                     </div>
                   </div>
                 </div>
-
               </div>
 
               <!-- jika tidak ada data ditemukan -->
@@ -363,9 +387,22 @@ watch(input)
                 <p class="fw-bold text-danger">Data tidak ditemukan. Silakan ketikkan kata kunci yang lain</p>
               </div>
             </div>
+
+            <!-- Pagination controls -->
+            <nav aria-label="Page navigation example" class="mt-4">
+              <ul class="pagination justify-content-center">
+                <li class="page-item" :class="{ disabled: currentPage === 1 }">
+                  <a class="page-link" @click.prevent="goToPage(currentPage - 1)">Previous</a>
+                </li>
+                <li class="page-item" v-for="page in totalPages" :key="page" :class="{ active: currentPage === page }">
+                  <a class="page-link" @click.prevent="goToPage(page)">{{ page }}</a>
+                </li>
+                <li class="page-item" :class="{ disabled: currentPage === totalPages }">
+                  <a class="page-link" @click.prevent="goToPage(currentPage + 1)">Next</a>
+                </li>
+              </ul>
+            </nav>
           </div>
-
-
         </div>
       </div>
     </div>
