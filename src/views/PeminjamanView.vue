@@ -83,7 +83,7 @@ const today = new Date().toISOString().split('T')[0]
                     v-if="quantity > stock || stock === 0 || quantity < 0 || (quantity == 0 && selectedBarang)"
                     required>
                   <input type="number" class="form-control rounded-pill" v-bind:min="0" v-bind:max="stock"
-                    v-model="quantity" v-if="quantity <= stock && quantity > 0 || !selectedBarang" required>
+                    v-model="quantity" v-if="(quantity <= stock && quantity > 0) || !selectedBarang" required>
                   <p class="text-danger mb-0 mt-2 ms-2" v-if="stock === 0">Maaf, stock habis
                   </p>
                   <p class="text-danger mb-0 mt-2 ms-2" v-if="quantity > stock">
@@ -120,7 +120,7 @@ const today = new Date().toISOString().split('T')[0]
                 </div>
               </div>
               <button class="addButton btn btn-primary rounded-pill mt-3 w-100"
-                :disabled="quantity > stock || quantity <= 0 || borrowedDate < today || returnDate < borrowedDate || borrowedDate === null || returnDate === null"
+                :disabled="quantity > stock || quantity <= 0 || borrowedDate < today || returnDate < borrowedDate || borrowedDate === null || returnDate === null && typeof quantity !== 'number'"
                 @click.prevent="$event => store.tambahDataPeminjaman(selectedBarang, quantity, borrowedDate, returnDate)">
                 Ajukan Peminjaman
               </button>
