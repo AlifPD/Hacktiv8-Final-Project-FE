@@ -100,6 +100,7 @@ export const useStore = defineStore('useStore', () => {
         }
       })
       dataInventory.value = response.data.data
+      return response.data.data
     } catch (error) {
       console.error("Error mengambil data", error.message)
       Swal.fire({
@@ -119,7 +120,7 @@ export const useStore = defineStore('useStore', () => {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
       })
-      dataPeminjaman.value = response.data.data
+      dataPeminjaman.value = response.data.data;
     } catch (error) {
       console.error("Error mengambil data", error);
       Swal.fire({
@@ -169,6 +170,46 @@ export const useStore = defineStore('useStore', () => {
     };
   }
 
+  // function untuk edit data pinjaman 
+  
+  const editDataPeminjaman = (idPinjaman, barangPinjaman, quantity, statusValue) => {
+    Swal.fire({
+      icon: 'question',
+      text: 'Apakah data yang ingin diubah sudah benar?',
+      showConfirmButton: true,
+      showCancelButton: true,
+      confirmButtonText: 'Ya',
+      cancelButtonText: 'Batal'
+    })
+      .then(async (result) => {
+        if (result.isConfirmed) {
+          const selectedBarang = dataInventory.value.find(item => item.itemName === barangPinjaman)
+          console.log(selectedBarang.id, "harusnya ini ID barang");
+          const data = { 
+            idItem : selectedBarang.id,
+            quantity: parseInt(quantity), 
+            status : statusValue, 
+          }
+          await axios.put(`http://localhost:4000/api/loans/update?id=${idPinjaman}`,data, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('token')}`
+            }
+          })
+          console.log(data);
+          Swal.fire({
+            icon: 'success',
+            text: 'Berhasil ubah data'
+          })
+        }
+      })
+      .catch(error => {
+        console.error(error)
+        Swal.fire({
+          icon: 'error',
+          text: error.response.data.message
+        })
+      })
+  }
 
   // function untuk menampilkan data user by id 
   const getUserById = async () => {
@@ -343,6 +384,7 @@ export const useStore = defineStore('useStore', () => {
     dataTambahPinjaman,
     dataUserbyId,
     tambahDataPeminjaman,
+    editDataPeminjaman,
     getPeminjaman, 
     getAllInventory,
     register,
