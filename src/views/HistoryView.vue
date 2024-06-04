@@ -193,10 +193,10 @@ watch(peminjamanData.value)
 
               <div class="col-4 col-sm-10 my-3" v-if="isStatusFiltered">
                 <span class="btn btn-light rounded-pill border-dark w-25 text-dark" @click.prevent="removeFilter">
-                  <div class="row flex-inline">
-                    <i class="bi bi-x-circle"></i>
-                    <p> Hapus Filter</p>
-                  </div>
+                  <!-- <div class="row flex-inline"> -->
+                  <i class="bi bi-x-circle"></i>
+                  <!-- <p> Hapus Filter</p> -->
+                  <!-- </div> -->
                 </span>
               </div>
 
@@ -304,7 +304,7 @@ watch(peminjamanData.value)
                     </div>
                   </tr>
 
-                  <tr v-if="filteredList.length === 0">
+                  <tr v-if="paginatedLoan.length === 0">
                     <th class="text-center align-middle" colspan="7">
                       <i class="bi bi-database-fill-x text-secondary" style="font-size:50px;"></i>
                       <p class="fw-bold text-secondary">Belum ada data</p>
