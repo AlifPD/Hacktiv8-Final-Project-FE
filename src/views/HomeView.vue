@@ -8,6 +8,7 @@ const store = useStore()
 store.isLoggedIn()
 
 let inventoryData = ref([])
+
 const fetchInventory = async () => {
   inventoryData.value = await store.getAllInventory()
   return inventoryData
@@ -43,12 +44,13 @@ function filteredList(fetchInventory) {
 }
 
 // function untuk mengurutkan data berdasarkan quantity
-let { sortStockDescending, sortStockAscending, sortProductDescending, sortProductAscending } = ref(false)
+let { sortStockDescending, sortStockAscending, sortProductDescending, sortProductAscending, isFiltered } = ref(false)
 function stockDescending(fetchInventory) {
   sortStockDescending = true
   sortStockAscending = false
   sortProductAscending = false
   sortProductDescending = false
+  isFiltered = true
   return fetchInventory.sort((a, b) => b.quantity - a.quantity)
 }
 
@@ -57,6 +59,7 @@ function stockAscending(fetchInventory) {
   sortStockDescending = false
   sortProductAscending = false
   sortProductDescending = false
+  isFiltered = true
   return fetchInventory.sort((a, b) => a.quantity - b.quantity)
 }
 
@@ -66,6 +69,7 @@ function productDescending(fetchInventory) {
   sortStockDescending = false
   sortProductDescending = true
   sortProductAscending = false
+  isFiltered = true
   return fetchInventory.sort((a, b) => b.itemName.localeCompare(a.itemName))
 
 }
@@ -75,7 +79,18 @@ function productAscending(fetchInventory) {
   sortStockDescending = false
   sortProductAscending = true
   sortProductDescending = false
+  isFiltered = true
   return fetchInventory.sort((a, b) => a.itemName.localeCompare(b.itemName))
+}
+
+// function untuk remove filter 
+function removeFilter(fetchInventory) {
+  sortStockAscending = false
+  sortStockDescending = false
+  sortProductAscending = false
+  sortProductDescending = false
+  isFiltered = false
+  return fetchInventory.sort((a, b) => a.id - b.id)
 }
 
 
@@ -127,6 +142,31 @@ const goToPage = (page) => {
   }
 };
 
+const pageRange = computed(() => {
+  const range = [];
+  const total = totalPages.value;
+  const current = currentPage.value;
+
+  if (total <= 3) {
+    for (let i = 1; i <= total; i++) {
+      range.push(i);
+    }
+  } else {
+    if (current <= 2) {
+      range.push(1, 2, 3);
+    } else if (current >= total - 1) {
+      range.push(total - 2, total - 1, total);
+    } else {
+      range.push(current - 1, current, current + 1);
+    }
+  }
+
+  if (current > 3) range.unshift('...');
+  if (current < total - 2) range.push('...');
+
+  return range;
+});
+
 watch(input, inventoryData.value)
 
 </script>
@@ -139,10 +179,10 @@ watch(input, inventoryData.value)
   <main>
     <div class="container mt-5">
       <div class="row">
-        <div class="col-sm-2 my-sm-5 p-3">
+        <div class="col-sm-2 my-sm-5 px-0 bg-primary rounded">
           <Sidebar />
         </div>
-        <div class="col my-sm-5 p-3">
+        <div class="col my-sm-5 mt-2 px-3">
           <div class="card p-4 shadow-lg">
             <h1>Daftar Inventaris Alat</h1>
             <!-- button untuk cari data dan filter-->
@@ -154,11 +194,10 @@ watch(input, inventoryData.value)
                 </div>
               </div>
 
-              <div class="col-2 my-3 d-flex justify-content-sm-center">
-                <button class="btn btn-primary text-white rounded-pill dropdown-toggle" type="button"
+              <div class="col-4 col-sm-1 my-3 d-flex justify-content-sm-center">
+                <button class="btn btn-primary text-white rounded dropdown-toggle" type="button"
                   data-bs-toggle="dropdown">
                   <i class="bi bi-sliders"></i>
-                  <span> Filter</span>
                 </button>
 
                 <ul class="dropdown-menu">
@@ -195,26 +234,35 @@ watch(input, inventoryData.value)
                 </ul>
               </div>
 
-              <div class="col my-3 mx-5 mx-sm-0">
-                <span class="btn btn-success text-white rounded-pill" data-bs-toggle="modal" data-bs-target="#addModal">
+              <div class="col-4 col-sm-1 my-3 d-flex justify-content-sm-center ">
+                <span class="btn btn-success text-white rounded" data-bs-toggle="modal" data-bs-target="#addModal">
                   <i class="bi bi-plus-circle h-100"></i>
-                  Tambah Inventaris
                 </span>
               </div>
 
-              <div class="col my-3 mx-5 mx-sm-0">
-                <span class="btn text-primary">
+              <div class="col-4 col-sm-1 my-3 ">
+                <span class="btn btn-warning rounded text-primary">
                   <i class="bi bi-arrow-clockwise" @click.prevent="fetchInventory()"></i>
+                </span>
+              </div>
+
+              <div class="col-4 col-sm my-3" v-if="isFiltered">
+                <span class="btn btn-light rounded-pill border-dark w-25 text-dark"
+                  @click.prevent="removeFilter(inventoryData)">
+                  <i class="bi bi-x-circle"></i>
                 </span>
               </div>
             </div>
 
             <div class="row row-cols-1 row-cols-sm-3 g-4">
               <!-- card isi data tersedia (diambil dari data dummy) -->
-              <!-- <div class="col" v-for="item in filteredList(store.dataInventory)" :key="item.id" :item="item"> -->
               <div class="col" v-for="item in paginatedInventory" :key="item.id" :item="item">
+                <!-- <div class="col" v-for="item in filteredList(inventoryData)" :key="item.id" :item="item"> -->
                 <div class="card">
-                  <img :src="item.pictureUrl" class="img-thumbnail img-fluid" alt="..." height="300">
+                  <img :src="item.pictureUrl" class="img-thumbnail img-fluid" alt="..." height="300"
+                    style="filter: grayscale(100%);" v-if="item.quantity === 0">
+                  <img :src="item.pictureUrl" class="img-thumbnail img-fluid" alt="..." height="300"
+                    v-if="item.quantity > 0">
                   <div class="card-body">
                     <div class="d-flex flex-row justify-content-between align-items-center mb-2">
                       <h5 class="card-title text-truncate text-capitalize mb-0">{{ item.itemName }}</h5>
@@ -222,9 +270,18 @@ watch(input, inventoryData.value)
                         data-bs-toggle="modal" :data-bs-target="'#infoModal-' + item.id">
                       </i>
                     </div>
-                    <p class="card-subtitle mb-2 text-body-secondary text-capitalize text-truncate"> Kategori: {{
-                      item.category }}</p>
-                    <p class="card-text"> Stock: {{ item.quantity }}</p>
+                    <p class="card-subtitle mb-2 text-body-secondary text-capitalize text-truncate"> Kategori:
+                      {{ item.category }}
+                    </p>
+                    <div class="d-flex flex-row justify-content-between align-items-center mb-2">
+                      <p class="card-text mb-0">
+                        Stock: {{ item.quantity }}
+                      </p>
+                      <p class="card-text text-danger border rounded border-danger w-25 text-center"
+                        v-if="item.quantity === 0">
+                        Habis
+                      </p>
+                    </div>
                   </div>
                 </div>
 
@@ -235,12 +292,18 @@ watch(input, inventoryData.value)
                     <div class="modal-content">
                       <div class="modal-header">
                         <h5 class="modal-title text-capitalize" id="exampleModalLabel">{{ item.itemName }}</h5>
+                        <p class="modal-title ms-3 text-danger border border-danger rounded w-25 fw-bold text-center"
+                          v-if="item.quantity === 0">
+                          Habis</p>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                       </div>
                       <div class="modal-body">
                         <div class="row">
                           <div class="col-sm-4 text-sm-center">
-                            <img :src="item.pictureUrl" class="img-fluid" alt="..." height="10">
+                            <img :src="item.pictureUrl" class="img-fluid " alt="..." height="10"
+                              v-if="item.quantity > 0">
+                            <img :src="item.pictureUrl" class="img-fluid" alt="..." height="10"
+                              style="filter: grayscale(100%);" v-if="item.quantity === 0">
                           </div>
                           <div class="col">
                             <ul class="list-group">
@@ -382,7 +445,7 @@ watch(input, inventoryData.value)
               </div>
 
               <!-- jika tidak ada data ditemukan -->
-              <div class="col-sm-12 text-center " v-if="input && !filteredList(store.dataInventory).length">
+              <div class="col-sm-12 text-center " v-if="input && !filteredList(inventoryData).length">
                 <i class="bi bi-emoji-frown text-danger" style="font-size:50px;"></i>
                 <p class="fw-bold text-danger">Data tidak ditemukan. Silakan ketikkan kata kunci yang lain</p>
               </div>
@@ -394,8 +457,9 @@ watch(input, inventoryData.value)
                 <li class="page-item" :class="{ disabled: currentPage === 1 }">
                   <a class="page-link" @click.prevent="goToPage(currentPage - 1)">Previous</a>
                 </li>
-                <li class="page-item" v-for="page in totalPages" :key="page" :class="{ active: currentPage === page }">
-                  <a class="page-link" @click.prevent="goToPage(page)">{{ page }}</a>
+                <li class="page-item" v-for="page in pageRange" :key="page" :class="{ active: currentPage === page }">
+                  <a class="page-link" @click.prevent="goToPage(page)" v-if="page !== '...'">{{ page }}</a>
+                  <span class="page-link" v-else>...</span>
                 </li>
                 <li class="page-item" :class="{ disabled: currentPage === totalPages }">
                   <a class="page-link" @click.prevent="goToPage(currentPage + 1)">Next</a>
@@ -411,6 +475,10 @@ watch(input, inventoryData.value)
 
 <style scoped>
 .bi-info-circle:hover {
+  cursor: pointer;
+}
+
+.page-item:hover {
   cursor: pointer;
 }
 </style>
