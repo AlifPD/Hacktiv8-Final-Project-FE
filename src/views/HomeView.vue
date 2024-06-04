@@ -124,7 +124,7 @@ async function handleUpdateInventory(itemId, itemName, category, quantity, locat
 
 
 const currentPage = ref(1);
-const perPage = ref(6); // limit per page 
+const perPage = ref(9); // limit per page 
 
 const paginatedInventory = computed(() => {
   const start = (currentPage.value - 1) * perPage.value;
@@ -257,11 +257,10 @@ watch(input, inventoryData.value)
             <div class="row row-cols-1 row-cols-sm-3 g-4">
               <!-- card isi data tersedia (diambil dari data dummy) -->
               <div class="col" v-for="item in paginatedInventory" :key="item.id" :item="item">
-                <!-- <div class="col" v-for="item in filteredList(inventoryData)" :key="item.id" :item="item"> -->
                 <div class="card">
-                  <img :src="item.pictureUrl" class="img-thumbnail img-fluid" alt="..." height="300"
+                  <img :src="item.pictureUrl" class="img-thumbnail img-fluid custom-img-size" alt="..."
                     style="filter: grayscale(100%);" v-if="item.quantity === 0">
-                  <img :src="item.pictureUrl" class="img-thumbnail img-fluid" alt="..." height="300"
+                  <img :src="item.pictureUrl" class="img-thumbnail img-fluid custom-img-size" alt="..."
                     v-if="item.quantity > 0">
                   <div class="card-body">
                     <div class="d-flex flex-row justify-content-between align-items-center mb-2">
@@ -445,10 +444,18 @@ watch(input, inventoryData.value)
               </div>
 
               <!-- jika tidak ada data ditemukan -->
-              <div class="col-sm-12 text-center " v-if="input && !filteredList(inventoryData).length">
+              <div class="col-sm-12 text-center " v-if="input && paginatedInventory.length === 0">
                 <i class="bi bi-emoji-frown text-danger" style="font-size:50px;"></i>
                 <p class="fw-bold text-danger">Data tidak ditemukan. Silakan ketikkan kata kunci yang lain</p>
               </div>
+
+              <!-- jika belum ada data-->
+              <div class="col-sm-12 text-center " v-if="!input && paginatedInventory.length === 0">
+                <!-- <i class="bi bi-database-fill-x text-secondary" style="font-size:50px;"></i> -->
+                <p class="fw-bold text-secondary">Loading ...</p>
+              </div>
+
+
             </div>
 
             <!-- Pagination controls -->
@@ -470,6 +477,7 @@ watch(input, inventoryData.value)
         </div>
       </div>
     </div>
+
   </main>
 </template>
 
@@ -480,5 +488,10 @@ watch(input, inventoryData.value)
 
 .page-item:hover {
   cursor: pointer;
+}
+
+.custom-img-size {
+  height: 200px;
+  width: 100%;
 }
 </style>
