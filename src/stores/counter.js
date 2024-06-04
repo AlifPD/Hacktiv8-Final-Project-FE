@@ -16,7 +16,7 @@ export const useStore = defineStore('useStore', () => {
         email,
         password
       }
-      const response = await axios.post('http://localhost:4000/api/auth/login', data) 
+      const response = await axios.post(`${import.meta.env.VITE_BASEURL}/api/auth/login`, data) 
       token.value = response.data.data.token
       localStorage.setItem('token', token.value)
       localStorage.setItem('id', response.data.data.id)
@@ -32,7 +32,7 @@ export const useStore = defineStore('useStore', () => {
       else{
         Swal.fire({
           icon: 'error',
-          text: error.response.data.message,
+          text: error.response.data.message? error.response.data.message : error.message,
         })
       }
     }
@@ -76,7 +76,7 @@ export const useStore = defineStore('useStore', () => {
         phoneNumber,
         confirmPassword
       }
-      await axios.post('http://localhost:4000/api/auth/signup', data)
+      await axios.post(`${import.meta.env.VITE_BASEURL}/api/auth/signup`, data)
       Swal.fire({
         icon: 'success',
         text: 'Registrasi Berhasil, Klik OK untuk login',
@@ -86,7 +86,7 @@ export const useStore = defineStore('useStore', () => {
       console.log(error);
       Swal.fire({
         icon: 'error',
-        text: error.response.data.message
+        text: error.response.data.message? error.response.data.message : error.message,
       })
     }
   }
@@ -94,7 +94,7 @@ export const useStore = defineStore('useStore', () => {
   
   const getAllInventory = async () => {
     try {
-      const response = await axios.get('http://localhost:4000/api/inventory/detail/all',{
+      const response = await axios.get(`${import.meta.env.VITE_BASEURL}/api/inventory/detail/all`,{
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
@@ -115,12 +115,14 @@ export const useStore = defineStore('useStore', () => {
 
   const getPeminjaman = async () => {
     try {
-      const response = await axios.get(`http://localhost:4000/api/loans/history`,{
+      const response = await axios.get(`${import.meta.env.VITE_BASEURL}/api/loans/history`,{
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
       })
       dataPeminjaman.value = response.data.data;
+      return response.data.data
+      // console.log(dataPeminjaman.value);
     } catch (error) {
       console.error("Error mengambil data", error);
       Swal.fire({
@@ -140,7 +142,7 @@ export const useStore = defineStore('useStore', () => {
       if (dataPeminjaman.value.length > 0) {
         id = Math.max.apply(null, dataPeminjaman.value.map(item => item.id)) + 1
       }
-      await axios.post('http://localhost:4000/api/loans/create ', {
+      await axios.post(`${import.meta.env.VITE_BASEURL}/api/loans/create`, {
         // id: parseInt(dataPeminjaman.value.length + 1),
         id: id, // id peminjaman 
         idItem: selected.id,
@@ -190,7 +192,7 @@ export const useStore = defineStore('useStore', () => {
             quantity: parseInt(quantity), 
             status : statusValue, 
           }
-          await axios.put(`http://localhost:4000/api/loans/update?id=${idPinjaman}`,data, {
+          await axios.put(`${import.meta.env.VITE_BASEURL}/api/loans/update?id=${idPinjaman}`,data, {
             headers: {
               Authorization: `Bearer ${localStorage.getItem('token')}`
             }
@@ -211,10 +213,43 @@ export const useStore = defineStore('useStore', () => {
       })
   }
 
+  // function untuk delete loan 
+
+  const deleteLoan = (id) => {
+    Swal.fire({
+      icon: 'question',
+      text: 'Anda yakin data peminjaman ini dihapus?',
+      showConfirmButton: true,
+      showCancelButton: true, 
+      confirmButtonText: 'Ya',
+      cancelButtonText: 'Batal'
+    })
+    .then(async (result) => {
+      if(result.isConfirmed){
+        await axios.delete(`${import.meta.env.VITE_BASEURL}/api/loans/delete?id=${id}`,{
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        })
+        Swal.fire({
+          icon: 'success',
+          text: 'Berhasil hapus data peminjaman!'
+        })
+      }
+    })
+    .catch((error)=>{
+      console.error(error)
+      Swal.fire({
+        icon: 'error',
+        text: error.response.data.message
+      })
+    })
+  }
+
   // function untuk menampilkan data user by id 
   const getUserById = async () => {
     try {
-      const response = await axios.get(`http://localhost:4000/api/auth/detail?id=${localStorage.getItem('id')}`, {
+      const response = await axios.get(`${import.meta.env.VITE_BASEURL}/api/auth/detail?id=${localStorage.getItem('id')}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
@@ -251,7 +286,7 @@ export const useStore = defineStore('useStore', () => {
       })
       .then(async (result) => {
         if(result.isConfirmed){
-          await axios.post('http://localhost:4000/api/inventory/create', data, {
+          await axios.post(`${import.meta.env.VITE_BASEURL}/api/inventory/create`, data, {
             headers: {
               Authorization: `Bearer ${localStorage.getItem('token')}`
             }
@@ -285,7 +320,7 @@ export const useStore = defineStore('useStore', () => {
       cancelButtonText: 'Batal'
     }).then(async (result) => {
       if(result.isConfirmed){
-        await axios.delete(`http://localhost:4000/api/inventory/delete?id=${id}` ,{
+        await axios.delete(`${import.meta.env.VITE_BASEURL}/api/inventory/delete?id=${id}` ,{
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`
           }
@@ -306,7 +341,7 @@ export const useStore = defineStore('useStore', () => {
   }
 
   // function update inventory
-  const updateInventory = async (id, itemName, category, quantity, location, pictureUrl, description) => {
+  const updateInventory =  (id, itemName, category, quantity, location, pictureUrl, description) => {
     Swal.fire({
       icon: 'question',
       text: 'Apakah data yang ingin diubah sudah benar?',
@@ -325,7 +360,7 @@ export const useStore = defineStore('useStore', () => {
           pictureUrl: pictureUrl,
           description: description
         }
-        await axios.put(`http://localhost:4000/api/inventory/update?id=${id}`, data, {
+        await axios.put(`${import.meta.env.VITE_BASEURL}/api/inventory/update?id=${id}`, data, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`
           }
@@ -345,38 +380,7 @@ export const useStore = defineStore('useStore', () => {
     })
   }
 
-  // function untuk delete loan 
-
-  const deleteLoan = async (id) => {
-    Swal.fire({
-      icon: 'question',
-      text: 'Anda yakin data peminjaman ini dihapus?',
-      showConfirmButton: true,
-      showCancelButton: true, 
-      confirmButtonText: 'Ya',
-      cancelButtonText: 'Batal'
-    })
-    .then(async (result)=>{
-      if(result.isConfirmed){
-        await axios.delete(`http://localhost:4000/api/loans/delete?id=${id}`,{
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`
-          }
-        })
-        Swal.fire({
-          icon: 'success',
-          text: 'Berhasil hapus data peminjaman!'
-        })
-      }
-    })
-    .catch((error)=>{
-      console.error(error)
-      Swal.fire({
-        icon: 'error',
-        text: error.response.data.message
-      })
-    })
-  }
+  
 
   return { 
     dataInventory,
