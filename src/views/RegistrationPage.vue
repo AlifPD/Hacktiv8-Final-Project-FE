@@ -47,18 +47,18 @@ watch(password, confirmPassword)
                                 required="true" v-model="userName" />
                         </div>
 
-                        <!-- Email input -->
-                        <div class="form-outline mb-4">
-                            <label class="form-label fw-bold" for="email">Email</label>
-                            <input type="email" class="form-control rounded-pill" placeholder="Masukkan email"
-                                required="true" v-model="email" />
-                        </div>
-
                         <!-- Phone Number input -->
                         <div class="form-outline mb-4">
                             <label class="form-label fw-bold" for="phoneNumber">Nomor Handphone</label>
                             <input type="text" class="form-control rounded-pill" placeholder="08xxxxxxxx"
                                 required="true" v-model="phoneNumber" />
+                        </div>
+
+                        <!-- Email input -->
+                        <div class="form-outline mb-4">
+                            <label class="form-label fw-bold" for="email">Email</label>
+                            <input type="email" class="form-control rounded-pill" placeholder="Masukkan email"
+                                required="true" v-model="email" />
                         </div>
 
                         <!-- Password input -->
