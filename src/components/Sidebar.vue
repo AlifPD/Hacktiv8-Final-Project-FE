@@ -39,6 +39,7 @@ import { RouterLink } from 'vue-router'
 .i-sidebar,
 .span-sidebar {
     color: white;
+    font-size: larger;
     /* color: white; */
 }
 
