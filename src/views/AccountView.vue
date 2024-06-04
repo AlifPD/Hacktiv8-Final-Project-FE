@@ -17,14 +17,14 @@ store.getUserById()
     <main>
         <div class="container mt-5">
             <div class="row">
-                <div class="col-sm-2 my-sm-5 p-3">
+                <div class="col-sm-2 my-sm-5 px-0 bg-primary rounded">
                     <Sidebar />
                 </div>
-                <div class="col my-sm-5 p-3">
+                <div class="col my-sm-5 mt-2 px-3">
                     <div class="card p-4 shadow-lg">
                         <h1>Account</h1>
                         <div class="row justify-content-between">
-                            <div class="col-sm-6">
+                            <div class="col-sm">
                                 <form>
                                     <div class="form-outline mb-4">
                                         <label class="form-label fw-bold">Email</label>
@@ -43,12 +43,12 @@ store.getUserById()
                                     </div>
                                 </form>
                             </div>
-                            <div class="col-sm-2 p-2">
+                            <!-- <div class="col-sm-2 p-2">
                                 <button class="btn btn-primary text-white rounded-pill w-100 mt-sm-3" type="button">
                                     <span class="bi bi-pencil"></span>
                                     &nbsp;Edit Data
                                 </button>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
                 </div>

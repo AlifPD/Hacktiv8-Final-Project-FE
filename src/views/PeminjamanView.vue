@@ -38,10 +38,10 @@ const today = new Date().toISOString().split('T')[0]
   <main>
     <div class="container mt-5">
       <div class="row">
-        <div class="col-sm-2 my-sm-5 p-3">
+        <div class="col-sm-2 my-sm-5 px-0 bg-primary rounded">
           <Sidebar />
         </div>
-        <div class="col my-sm-5 p-3">
+        <div class="col my-sm-5 mt-2 px-3">
           <div class="card p-4 shadow-lg">
             <h1>Peminjaman</h1>
             <h5 class="fw-normal">Halo, <b class="text-primary">{{ store.dataUserbyId.userName }}</b></h5>
@@ -84,7 +84,8 @@ const today = new Date().toISOString().split('T')[0]
                     required>
                   <input type="number" class="form-control rounded-pill" v-bind:min="0" v-bind:max="stock"
                     v-model="quantity" v-if="(quantity <= stock && quantity > 0) || !selectedBarang" required>
-                  <p class="text-danger mb-0 mt-2 ms-2" v-if="stock === 0">Maaf, stock habis
+                  <p class="text-danger mb-0 mt-2 ms-2" v-if="stock === 0">Maaf, stock habis. Hubungi admin atau pilih
+                    barang lain.
                   </p>
                   <p class="text-danger mb-0 mt-2 ms-2" v-if="quantity > stock">
                     Maaf, maksimum pemesanan adalah <strong>{{ stock }} pcs</strong>
@@ -92,7 +93,7 @@ const today = new Date().toISOString().split('T')[0]
                   <p class="text-danger mb-0 mt-2 ms-2" v-if="quantity < 0 && selectedBarang">
                     Maaf, nilai pemesanan tidak valid
                   </p>
-                  <p class="text-danger mb-0 mt-2 ms-2" v-if="quantity == 0 && selectedBarang">
+                  <p class="text-danger mb-0 mt-2 ms-2" v-if="quantity == 0 && selectedBarang && stock !== 0">
                     Maaf, nilai minimum pemesanan adalah <strong>1 pcs</strong>
                   </p>
                 </div>
