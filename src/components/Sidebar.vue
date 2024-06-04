@@ -5,9 +5,9 @@ import { RouterLink } from 'vue-router'
 
 <template>
 
-    <nav id="sidebarMenu" class="collapse d-block sidebar collapse mt-sm-0 mt-5">
-        <div class="list-group list-group-flush border rounded shadow-lg">
-            <RouterLink to="/" class="text-decoration-none text-dark">
+    <nav id="sidebarMenu" class="collapse d-block sidebar collapse mt-sm-0 mt-2 h-screen">
+        <div class="list-group list-group-flush">
+            <RouterLink to="/" class="text-decoration-none">
                 <a class="list-group-item list-group-item-action py-2 nav-link">
                     <i class="i-sidebar bi bi-house"></i>
                     <span class="span-sidebar">
@@ -15,7 +15,7 @@ import { RouterLink } from 'vue-router'
                     </span>
                 </a>
             </RouterLink>
-            <RouterLink to="/peminjaman" class="text-decoration-none text-dark">
+            <RouterLink to="/peminjaman" class="text-decoration-none">
                 <a class="list-group-item list-group-item-action py-2 nav-link">
                     <i class="i-sidebar bi bi-wallet"></i>
                     <span class="span-sidebar">
@@ -23,7 +23,7 @@ import { RouterLink } from 'vue-router'
                     </span>
                 </a>
             </RouterLink>
-            <RouterLink to="/histori" class="text-decoration-none text-dark">
+            <RouterLink to="/histori" class="text-decoration-none">
                 <a class="list-group-item list-group-item-action py-2 nav-link">
                     <i class="i-sidebar bi bi-clock-history"></i>
                     <span class="span-sidebar">
@@ -39,14 +39,26 @@ import { RouterLink } from 'vue-router'
 .i-sidebar,
 .span-sidebar {
     color: white;
+    /* color: white; */
+}
+
+.i-sidebar:hover {
+    color: chartreuse;
+}
+
+.span-sidebar:hover {
+    color: chartreuse;
 }
 
 .list-group-item {
-    background-color: #0d6efd;
+    background-color: transparent;
+    border: 0;
+
 }
 
 .list-group-item:hover {
     background-color: rgb(94, 93, 93);
+    border-radius: .375rem;
 }
 
 .bi {
