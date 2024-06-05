@@ -98,7 +98,6 @@ function removeFilter(fetchInventory) {
 async function handleAddInventory() {
   await store.addInventory(addItemName.value, addCategory.value, addQuantity.value, addLocation.value, addPictureUrl.value, addDescription.value)
   inventoryData.value = await store.getAllInventory()
-  console.log(inventoryData.value, 'ini inventoryData');
   // clear input
   addItemName.value = ''
   addCategory.value = ''
@@ -112,14 +111,12 @@ async function handleAddInventory() {
 async function handleDeleteInventory(itemId) {
   await store.deleteInventory(itemId)
   inventoryData.value = await store.getAllInventory()
-  console.log(inventoryData.value, 'ini inventoryData');
 }
 
 // function untuk update data 
 async function handleUpdateInventory(itemId, itemName, category, quantity, location, pictureUrl, description) {
   await store.updateInventory(itemId, itemName, category, quantity, location, pictureUrl, description)
   inventoryData.value = await store.getAllInventory()
-  console.log(inventoryData.value, 'ini inventoryData');
 }
 
 

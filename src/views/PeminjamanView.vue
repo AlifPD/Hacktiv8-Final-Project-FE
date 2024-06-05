@@ -67,8 +67,6 @@ const today = new Date().toISOString().split('T')[0]
                   <select class="form-select rounded-pill text-capitalize" v-model="selectedBarang"
                     placeholder="Pilih Barang" required>
                     <option disabled selected>Pilih Barang</option>
-                    <!-- <option v-for="item in store.dataInventory.map(item => item.itemName)" :key="item">{{ item }}
-                    </option> -->
                     <option v-for="item in itemName" :key="item">{{ item }}</option>
                   </select>
                 </div>
@@ -136,7 +134,7 @@ const today = new Date().toISOString().split('T')[0]
 </template>
 
 <style scoped>
-.add-button:disabled:hover:disabled:hover {
-  cursor: no-drop;
+.addButton:hover:disabled {
+  cursor: not-allowed;
 }
 </style>

@@ -83,7 +83,7 @@ export const useStore = defineStore('useStore', () => {
       })
       router.push({name: 'login'})
     } catch (error) {
-      console.log(error);
+      console.error(error);
       Swal.fire({
         icon: 'error',
         text: error.response.data.message? error.response.data.message : error.message,
@@ -122,7 +122,6 @@ export const useStore = defineStore('useStore', () => {
       })
       dataPeminjaman.value = response.data.data;
       return response.data.data
-      // console.log(dataPeminjaman.value);
     } catch (error) {
       console.error("Error mengambil data", error);
       Swal.fire({
@@ -186,7 +185,6 @@ export const useStore = defineStore('useStore', () => {
       .then(async (result) => {
         if (result.isConfirmed) {
           const selectedBarang = dataInventory.value.find(item => item.itemName === barangPinjaman)
-          console.log(selectedBarang.id, "harusnya ini ID barang");
           const data = { 
             idItem : selectedBarang.id,
             quantity: parseInt(quantity), 
@@ -197,7 +195,6 @@ export const useStore = defineStore('useStore', () => {
               Authorization: `Bearer ${localStorage.getItem('token')}`
             }
           })
-          console.log(data);
           Swal.fire({
             icon: 'success',
             text: 'Berhasil ubah data'
@@ -295,7 +292,6 @@ export const useStore = defineStore('useStore', () => {
             icon: 'success',
             text: "Berhasil tambah inventaris",
           })
-          console.log(data);
         }
       })
       .catch((error) => {
@@ -325,7 +321,6 @@ export const useStore = defineStore('useStore', () => {
             Authorization: `Bearer ${localStorage.getItem('token')}`
           }
         })
-        console.log("ini id: ",id);
         Swal.fire({
           icon: 'success',
           text: "Berhasil hapus item",

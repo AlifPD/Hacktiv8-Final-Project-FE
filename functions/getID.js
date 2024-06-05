@@ -5,7 +5,6 @@ export function getID(id){
 
     data.value = id
 
-    console.log(data.value);
     return data
 
 }
