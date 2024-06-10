@@ -3,7 +3,7 @@ import Sidebar from '../components/Sidebar.vue'
 import { useStore } from '@/stores/counter';
 import { getID } from '../../functions/getID'
 import Navbar from '../components/Navbar.vue'
-import { onBeforeUpdate, onMounted, onUpdated, ref, watch, computed } from 'vue'
+import { onMounted, ref, watch, computed } from 'vue'
 const store = useStore()
 store.isLoggedIn()
 
@@ -28,9 +28,6 @@ onMounted(() => {
   fetchInventory()
 })
 
-// onUpdated(() => {
-//   fetchInventory()
-// })
 
 let input = ref('')
 function filteredList(fetchInventory) {
@@ -447,10 +444,12 @@ watch(input, inventoryData.value)
               </div>
 
               <!-- jika belum ada data-->
-              <div class="col-sm-12 text-center " v-if="!input && paginatedInventory.length === 0">
-                <!-- <i class="bi bi-database-fill-x text-secondary" style="font-size:50px;"></i> -->
-                <p class="fw-bold text-secondary">Loading ...</p>
+              <div class="col-sm-12 text-center mt-5" v-if="!input && paginatedInventory.length === 0">
+                <div class="loader text-center"></div>
+                <h3 class="fw-bold text-secondary mt-3">Loading ...</h3>
               </div>
+
+              <!-- <span class="loader"></span> -->
 
 
             </div>
@@ -490,5 +489,25 @@ watch(input, inventoryData.value)
 .custom-img-size {
   height: 200px;
   width: 100%;
+}
+
+.loader {
+  border: 26px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 26px solid #3498db;
+  width: 250px;
+  height: 250px;
+  animation: spin 2s linear infinite;
+  margin: auto;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 </style>
