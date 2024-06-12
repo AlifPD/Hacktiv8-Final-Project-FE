@@ -252,8 +252,13 @@ watch(input, inventoryData.value)
               <!-- card isi data tersedia (diambil dari data dummy) -->
               <div class="col" v-for="item in paginatedInventory" :key="item.id" :item="item">
                 <div class="card">
-                  <img :src="item.pictureUrl" class="img-thumbnail img-fluid custom-img-size" alt="..."
-                    style="filter: grayscale(100%);" v-if="item.quantity === 0">
+                  <div class="img-container">
+                    <img :src="item.pictureUrl" class="img-thumbnail img-fluid custom-img-size" alt="..."
+                      v-if="item.quantity === 0">
+                    <p class="text-danger  w-25 text-center" v-if="item.quantity === 0">
+                      Habis
+                    </p>
+                  </div>
                   <img :src="item.pictureUrl" class="img-thumbnail img-fluid custom-img-size" alt="..."
                     v-if="item.quantity > 0">
                   <div class="card-body">
@@ -509,5 +514,22 @@ watch(input, inventoryData.value)
   100% {
     transform: rotate(360deg);
   }
+}
+
+.img-container img {
+  filter: grayscale(100%);
+  /* fill-opacity: calc(0.3); */
+}
+
+.img-container p {
+  position: absolute;
+  top: 7%;
+  left: 15%;
+  transform: translate(-50%, -50%);
+  /* font-size: 30px; */
+  width: 50%;
+  font-weight: bold;
+  border: 2px solid red;
+  border-radius: 10%;
 }
 </style>
