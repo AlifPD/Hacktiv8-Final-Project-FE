@@ -55,8 +55,8 @@ const togglePasswordVisibility = () => {
                             </div>
                         </div>
 
-                        <div class="d-flex justify-content-between align-items-center">
-                            <!-- Checkbox -->
+                        <!-- Checkbox -->
+                        <!-- <div class="d-flex justify-content-between align-items-center">
                             <div class="form-check mb-0">
                                 <input class="form-check-input me-2" type="checkbox" value="" id="form2Example3" />
                                 <label class="form-check-label" for="form2Example3">
@@ -66,9 +66,9 @@ const togglePasswordVisibility = () => {
                             <a class="text-decoration-none" data-bs-toggle="popover" data-bs-placement="left"
                                 data-bs-content="Fitur belum tersedia. Silakan hubungi administrator">Lupa password?
                             </a>
-                        </div>
+                        </div> -->
 
-                        <div class="text-center text-lg-start mt-4 pt-2">
+                        <div class="text-center text-lg-start mt-2 pt-2">
                             <button class="btn btn-primary rounded-pill w-100" type="submit"
                                 @click.prevent="store.login(email, password)"
                                 :disabled="email === '' || password === ''">
