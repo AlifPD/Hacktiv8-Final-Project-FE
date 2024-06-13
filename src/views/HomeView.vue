@@ -251,7 +251,7 @@ watch(input, inventoryData.value)
             <div class="row row-cols-1 row-cols-sm-3 g-4">
               <!-- card isi data tersedia (diambil dari data dummy) -->
               <div class="col" v-for="item in paginatedInventory" :key="item.id" :item="item">
-                <div class="card">
+                <div class="homeCardBody card">
                   <div class="img-container">
                     <img :src="item.pictureUrl" class="img-thumbnail img-fluid custom-img-size" alt="..."
                       v-if="item.quantity === 0">
@@ -268,7 +268,7 @@ watch(input, inventoryData.value)
                         data-bs-toggle="modal" :data-bs-target="'#infoModal-' + item.id">
                       </i>
                     </div>
-                    <p class="card-subtitle mb-2 text-body-secondary text-capitalize text-truncate"> Kategori:
+                    <p class="card-subtitle mb-2 text-capitalize text-truncate"> Kategori:
                       {{ item.category }}
                     </p>
                     <div class="d-flex flex-row justify-content-between align-items-center mb-2">
@@ -483,6 +483,12 @@ watch(input, inventoryData.value)
 </template>
 
 <style scoped>
+.homeCardBody:hover {
+  background-color: #3498db;
+  cursor: pointer;
+  color: white;
+}
+
 .bi-info-circle:hover {
   cursor: pointer;
 }
